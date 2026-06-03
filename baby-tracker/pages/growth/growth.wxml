@@ -1,0 +1,181 @@
+<view class="container">
+  <!-- 成长数据输入 -->
+  <view class="card input-card">
+    <text class="section-title">记录数据</text>
+    
+    <!-- 体重 -->
+    <view class="input-row">
+      <view class="input-label">
+        <text class="label-icon">⚖️</text>
+        <text class="label-text">体重</text>
+      </view>
+      <view class="input-wrapper">
+        <input 
+          type="digit" 
+          class="input-field" 
+          value="{{weight}}"
+          bindinput="inputWeight"
+          placeholder="0.0"
+        />
+        <text class="input-unit">kg</text>
+      </view>
+    </view>
+    
+    <!-- 身高 -->
+    <view class="input-row">
+      <view class="input-label">
+        <text class="label-icon">📏</text>
+        <text class="label-text">身高</text>
+      </view>
+      <view class="input-wrapper">
+        <input 
+          type="digit" 
+          class="input-field" 
+          value="{{height}}"
+          bindinput="inputHeight"
+          placeholder="0.0"
+        />
+        <text class="input-unit">cm</text>
+      </view>
+    </view>
+    
+    <!-- 头围 -->
+    <view class="input-row">
+      <view class="input-label">
+        <text class="label-icon">⭕</text>
+        <text class="label-text">头围</text>
+      </view>
+      <view class="input-wrapper">
+        <input 
+          type="digit" 
+          class="input-field" 
+          value="{{headCircumference}}"
+          bindinput="inputHeadCircumference"
+          placeholder="0.0"
+        />
+        <text class="input-unit">cm</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 记录时间 -->
+  <view class="card time-card">
+    <text class="section-title">测量时间</text>
+    <view class="time-input">
+      <picker mode="date" value="{{recordDate}}" bindchange="bindDateChange">
+        <view class="picker-value">
+          <text>{{recordDate}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+      <picker mode="time" value="{{recordTime}}" bindchange="bindTimeChange">
+        <view class="picker-value">
+          <text>{{recordTime}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 趋势图表 -->
+  <view class="card chart-card" wx:if="{{recentRecords.length > 0}}">
+    <text class="section-title">成长趋势</text>
+    
+    <!-- 图表类型切换 -->
+    <view class="chart-tabs">
+      <view 
+        class="chart-tab {{chartType === 'weight' ? 'active' : ''}}"
+        bindtap="switchChart"
+        data-type="weight"
+      >
+        <text>体重</text>
+      </view>
+      <view 
+        class="chart-tab {{chartType === 'height' ? 'active' : ''}}"
+        bindtap="switchChart"
+        data-type="height"
+      >
+        <text>身高</text>
+      </view>
+      <view 
+        class="chart-tab {{chartType === 'head' ? 'active' : ''}}"
+        bindtap="switchChart"
+        data-type="head"
+      >
+        <text>头围</text>
+      </view>
+    </view>
+    
+    <!-- Canvas图表 -->
+    <view class="chart-wrapper">
+      <canvas 
+        type="2d" 
+        id="chart-canvas" 
+        canvas-id="chart-canvas"
+        style="width: {{canvasWidth}}px; height: {{canvasHeight}}px;"
+      ></canvas>
+      <view class="chart-empty" wx:if="{{recentRecords.length === 0}}">
+        <text>暂无数据</text>
+      </view>
+    </view>
+    
+    <!-- 最新数据 -->
+    <view class="latest-data" wx:if="{{recentRecords.length > 0}}">
+      <view class="latest-item" wx:if="{{recentRecords[0].weight}}">
+        <text class="latest-label">最新体重</text>
+        <text class="latest-value">{{recentRecords[0].weight}} kg</text>
+      </view>
+      <view class="latest-item" wx:if="{{recentRecords[0].height}}">
+        <text class="latest-label">最新身高</text>
+        <text class="latest-value">{{recentRecords[0].height}} cm</text>
+      </view>
+      <view class="latest-item" wx:if="{{recentRecords[0].headCircumference}}">
+        <text class="latest-label">最新头围</text>
+        <text class="latest-value">{{recentRecords[0].headCircumference}} cm</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card note-card">
+    <text class="section-title">备注（选填）</text>
+    <textarea 
+      class="note-input"
+      placeholder="可以记录测量时的状态..."
+      value="{{note}}"
+      bindinput="inputNote"
+      maxlength="200"
+    />
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-btn-wrapper">
+    <button class="submit-btn" bindtap="submitRecord">
+      <text>💾</text>
+      <text>保存记录</text>
+    </button>
+  </view>
+
+  <!-- 历史记录 -->
+  <view class="card history-card" wx:if="{{recentRecords.length > 0}}">
+    <text class="section-title">历史记录</text>
+    <view class="history-list">
+      <view 
+        wx:for="{{recentRecords}}" 
+        wx:key="id"
+        class="history-item"
+        bindlongpress="onLongPressRecord"
+        data-id="{{item.id}}"
+      >
+        <view class="history-date">{{item.dateStr}}</view>
+        <view class="history-data">
+          <text wx:if="{{item.weight}}" class="data-tag">体重: {{item.weight}}kg</text>
+          <text wx:if="{{item.height}}" class="data-tag">身高: {{item.height}}cm</text>
+          <text wx:if="{{item.headCircumference}}" class="data-tag">头围: {{item.headCircumference}}cm</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-space"></view>
+</view>

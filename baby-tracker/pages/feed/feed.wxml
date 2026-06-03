@@ -1,0 +1,110 @@
+<view class="container">
+  <!-- 喂奶方式选择 -->
+  <view class="card method-card">
+    <text class="section-title">喂奶方式</text>
+    <view class="method-grid">
+      <view 
+        wx:for="{{methodOptions}}" 
+        wx:key="value"
+        class="method-item {{feedMethod === item.value ? 'active' : ''}}"
+        bindtap="selectMethod"
+        data-method="{{item.value}}"
+      >
+        <text class="method-icon">{{item.icon}}</text>
+        <text class="method-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 奶瓶容量输入（仅奶瓶模式显示） -->
+  <view class="card bottle-card" wx:if="{{feedMethod === 'bottle'}}">
+    <text class="section-title">喂奶量</text>
+    <view class="bottle-input">
+      <view class="amount-control">
+        <view class="control-btn" bindtap="reduceAmount">
+          <text>-</text>
+        </view>
+        <input 
+          type="number" 
+          class="amount-input" 
+          value="{{bottleAmount}}"
+          bindinput="inputAmount"
+          placeholder="请输入"
+        />
+        <view class="control-btn" bindtap="addAmount">
+          <text>+</text>
+        </view>
+      </view>
+      <text class="unit">ml</text>
+    </view>
+    <view class="quick-amounts">
+      <view class="quick-item" bindtap="addAmount" data-value="60">60ml</view>
+      <view class="quick-item" bindtap="addAmount" data-value="90">90ml</view>
+      <view class="quick-item" bindtap="addAmount" data-value="120">120ml</view>
+      <view class="quick-item" bindtap="addAmount" data-value="150">150ml</view>
+    </view>
+  </view>
+
+  <!-- 记录时间 -->
+  <view class="card time-card">
+    <text class="section-title">记录时间</text>
+    <view class="time-input">
+      <picker mode="date" value="{{recordDate}}" bindchange="bindDateChange">
+        <view class="picker-value">
+          <text>{{recordDate}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+      <picker mode="time" value="{{recordTime}}" bindchange="bindTimeChange">
+        <view class="picker-value">
+          <text>{{recordTime}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card note-card">
+    <text class="section-title">备注（选填）</text>
+    <textarea 
+      class="note-input"
+      placeholder="可以添加一些备注，如宝宝的状态..."
+      value="{{note}}"
+      bindinput="inputNote"
+      maxlength="200"
+    />
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-btn-wrapper">
+    <button class="submit-btn" bindtap="submitRecord">
+      <text>💾</text>
+      <text>保存记录</text>
+    </button>
+  </view>
+
+  <!-- 最近记录 -->
+  <view class="card recent-card" wx:if="{{recentRecords.length > 0}}">
+    <text class="section-title">最近记录</text>
+    <view class="recent-list">
+      <view 
+        wx:for="{{recentRecords}}" 
+        wx:key="id"
+        class="recent-item"
+        bindlongpress="onLongPressRecord"
+        data-id="{{item.id}}"
+      >
+        <view class="recent-icon">
+          <text>🍼</text>
+        </view>
+        <view class="recent-content">
+          <text class="recent-detail">{{item.detail}}</text>
+          <text class="recent-time">{{item.relativeTime}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-space"></view>
+</view>

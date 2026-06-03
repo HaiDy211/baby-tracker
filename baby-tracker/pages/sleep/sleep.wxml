@@ -1,0 +1,125 @@
+<view class="container">
+  <!-- 睡眠状态选择 -->
+  <view class="card status-card">
+    <text class="section-title">状态</text>
+    <view class="status-toggle">
+      <view 
+        class="toggle-item {{sleepStatus === 'sleeping' ? 'active' : ''}}"
+        bindtap="toggleSleepStatus"
+        data-status="sleeping"
+      >
+        <text class="toggle-icon">🌙</text>
+        <text class="toggle-label">宝宝睡着了</text>
+      </view>
+      <view 
+        class="toggle-item {{sleepStatus === 'wokeup' ? 'active' : ''}}"
+        bindtap="toggleSleepStatus"
+        data-status="wokeup"
+      >
+        <text class="toggle-icon">☀️</text>
+        <text class="toggle-label">宝宝醒来了</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 入睡时间 -->
+  <view class="card time-card">
+    <view class="time-header">
+      <text class="section-title">入睡时间</text>
+      <text class="time-hint">🌙</text>
+    </view>
+    <view class="time-input">
+      <picker mode="date" value="{{sleepDate}}" bindchange="bindSleepDateChange">
+        <view class="picker-value">
+          <text>{{sleepDate}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+      <picker mode="time" value="{{sleepTime}}" bindchange="bindSleepTimeChange">
+        <view class="picker-value">
+          <text>{{sleepTime}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 醒来时间（仅醒来模式显示） -->
+  <view class="card time-card wake-card" wx:if="{{sleepStatus === 'wokeup'}}">
+    <view class="time-header">
+      <text class="section-title">醒来时间</text>
+      <text class="time-hint">⏰</text>
+    </view>
+    <view class="time-input">
+      <picker mode="date" value="{{wakeDate}}" bindchange="bindWakeDateChange">
+        <view class="picker-value">
+          <text>{{wakeDate}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+      <picker mode="time" value="{{wakeTime}}" bindchange="bindWakeTimeChange">
+        <view class="picker-value">
+          <text>{{wakeTime}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 睡眠时长 -->
+  <view class="card duration-card">
+    <text class="section-title">睡眠时长</text>
+    <view class="duration-display">
+      <text class="duration-icon">😴</text>
+      <text class="duration-value" wx:if="{{sleepStatus === 'sleeping'}}">--</text>
+      <text class="duration-value" wx:else>{{durationText}}</text>
+    </view>
+    <text class="duration-tip" wx:if="{{sleepStatus === 'sleeping'}}">宝宝入睡后记录，醒来时再记录一次即可</text>
+    <text class="duration-tip error" wx:elif="{{durationText === '醒来时间不能早于入睡时间'}}">{{durationText}}</text>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card note-card">
+    <text class="section-title">备注（选填）</text>
+    <textarea 
+      class="note-input"
+      placeholder="可以记录睡眠质量、姿势等..."
+      value="{{note}}"
+      bindinput="inputNote"
+      maxlength="200"
+    />
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-btn-wrapper">
+    <button class="submit-btn" bindtap="submitRecord">
+      <text>💾</text>
+      <text wx:if="{{sleepStatus === 'sleeping'}}">记录入睡</text>
+      <text wx:else>记录醒来</text>
+    </button>
+  </view>
+
+  <!-- 最近记录 -->
+  <view class="card recent-card" wx:if="{{recentRecords.length > 0}}">
+    <text class="section-title">最近记录</text>
+    <view class="recent-list">
+      <view 
+        wx:for="{{recentRecords}}" 
+        wx:key="id"
+        class="recent-item"
+        bindlongpress="onLongPressRecord"
+        data-id="{{item.id}}"
+      >
+        <view class="recent-icon">
+          <text>😴</text>
+        </view>
+        <view class="recent-content">
+          <text class="recent-detail">{{item.detail}}</text>
+          <text class="recent-time">{{item.relativeTime}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-space"></view>
+</view>

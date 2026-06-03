@@ -1,0 +1,212 @@
+/* 换尿布记录页面样式 */
+
+.container {
+  min-height: 100vh;
+  background-color: #FFF5F8;
+  padding-bottom: 30rpx;
+}
+
+.card {
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  margin: 20rpx 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(255, 182, 193, 0.15);
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 25rpx;
+  display: block;
+}
+
+/* 状态选择 */
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  margin-bottom: 25rpx;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx 20rpx;
+  border-radius: 20rpx;
+  background-color: #FFF8FA;
+  border: 3rpx solid transparent;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.status-item.active {
+  background: linear-gradient(135deg, #E0F4F6 0%, #F0FAFB 100%);
+  border-color: #B0E0E6;
+}
+
+.status-icon {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56rpx;
+  margin-bottom: 15rpx;
+  box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.08);
+}
+
+.status-label {
+  font-size: 28rpx;
+  color: #666666;
+  font-weight: 500;
+}
+
+.status-item.active .status-label {
+  color: #20B2AA;
+}
+
+.status-check {
+  position: absolute;
+  top: 15rpx;
+  right: 15rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #B0E0E6 0%, #87CEEB 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+/* 状态提示 */
+.status-tip {
+  text-align: center;
+  padding: 20rpx;
+  background-color: #F8F8F8;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  color: #20B2AA;
+}
+
+.tip-warning {
+  color: #FF6B6B !important;
+}
+
+/* 时间选择 */
+.time-input {
+  display: flex;
+  gap: 20rpx;
+}
+
+.picker-value {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 25rpx;
+  background-color: #FFF8FA;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.arrow {
+  font-size: 32rpx;
+  color: #CCCCCC;
+}
+
+/* 备注 */
+.note-input {
+  width: 100%;
+  min-height: 150rpx;
+  padding: 20rpx;
+  background-color: #FFF8FA;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  color: #333333;
+  box-sizing: border-box;
+}
+
+/* 提交按钮 */
+.submit-btn-wrapper {
+  padding: 30rpx;
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25rpx;
+  background: linear-gradient(135deg, #B0E0E6 0%, #ADD8E6 100%);
+  border-radius: 50rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  border: none;
+  box-shadow: 0 8rpx 25rpx rgba(176, 224, 230, 0.4);
+}
+
+.submit-btn text:first-child {
+  font-size: 36rpx;
+  margin-right: 10rpx;
+}
+
+/* 最近记录 */
+.recent-card {
+  margin-top: 30rpx;
+}
+
+.recent-list {
+  margin-top: 10rpx;
+}
+
+.recent-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+
+.recent-item:last-child {
+  border-bottom: none;
+}
+
+.recent-icon {
+  width: 70rpx;
+  height: 70rpx;
+  border-radius: 50%;
+  background-color: #E0F4F6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+
+.recent-content {
+  flex: 1;
+  margin-left: 20rpx;
+}
+
+.recent-detail {
+  font-size: 28rpx;
+  color: #333333;
+  display: block;
+  margin-bottom: 5rpx;
+}
+
+.recent-time {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.bottom-space {
+  height: 50rpx;
+}

@@ -1,0 +1,217 @@
+/* 全局样式 - 马卡龙色系主题 */
+
+page {
+  --primary-pink: #FFB6C1;
+  --primary-blue: #B0E0E6;
+  --primary-purple: #DDA0DD;
+  --primary-green: #98FB98;
+  --primary-yellow: #FFFACD;
+  --primary-orange: #FFDAB9;
+  
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-placeholder: #999999;
+  
+  --bg-color: #FFF5F8;
+  --card-bg: #FFFFFF;
+  --shadow-color: rgba(255, 182, 193, 0.3);
+  
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  font-size: 28rpx;
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+}
+
+/* 通用卡片样式 */
+.card {
+  background-color: var(--card-bg);
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin: 20rpx;
+  box-shadow: 0 4rpx 20rpx var(--shadow-color);
+}
+
+/* 通用按钮样式 */
+.btn {
+  border-radius: 50rpx;
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  border: none;
+  outline: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #FFB6C1 0%, #FFC0CB 100%);
+  color: #FFFFFF;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #B0E0E6 0%, #ADD8E6 100%);
+  color: #FFFFFF;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #98FB98 0%, #90EE90 100%);
+  color: #FFFFFF;
+}
+
+.btn-orange {
+  background: linear-gradient(135deg, #FFDAB9 0%, #FFE4C4 100%);
+  color: #FFFFFF;
+}
+
+.btn-disabled {
+  background-color: #CCCCCC;
+  color: #FFFFFF;
+}
+
+/* 标题样式 */
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 20rpx;
+  padding-left: 10rpx;
+  border-left: 6rpx solid var(--primary-pink);
+}
+
+/* 统计数字样式 */
+.stat-number {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: var(--primary-pink);
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  margin-top: 8rpx;
+}
+
+/* 输入框样式 */
+.input {
+  background-color: #F8F8F8;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
+  border: 2rpx solid transparent;
+  transition: border-color 0.3s;
+}
+
+.input:focus {
+  border-color: var(--primary-pink);
+  background-color: #FFFFFF;
+}
+
+.input-placeholder {
+  color: var(--text-placeholder);
+}
+
+/* 标签样式 */
+.tag {
+  display: inline-block;
+  padding: 8rpx 20rpx;
+  border-radius: 30rpx;
+  font-size: 22rpx;
+}
+
+.tag-pink {
+  background-color: #FFE4E9;
+  color: #FF6B8A;
+}
+
+.tag-blue {
+  background-color: #E0F4F6;
+  color: #20B2AA;
+}
+
+.tag-green {
+  background-color: #E8FFE8;
+  color: #32CD32;
+}
+
+.tag-yellow {
+  background-color: #FFFFF0;
+  color: #DAA520;
+}
+
+/* 时间轴节点 */
+.timeline-dot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  background-color: var(--primary-pink);
+  flex-shrink: 0;
+}
+
+.timeline-dot-feed {
+  background-color: #FFB6C1;
+}
+
+.timeline-dot-diaper {
+  background-color: #B0E0E6;
+}
+
+.timeline-dot-sleep {
+  background-color: #DDA0DD;
+}
+
+.timeline-dot-growth {
+  background-color: #98FB98;
+}
+
+/* 空状态样式 */
+.empty-state {
+  text-align: center;
+  padding: 100rpx 50rpx;
+  color: var(--text-placeholder);
+}
+
+.empty-state image {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 30rpx;
+  opacity: 0.5;
+}
+
+/* 分隔线 */
+.divider {
+  height: 1rpx;
+  background-color: #F0F0F0;
+  margin: 20rpx 0;
+}
+
+/* Flex布局工具类 */
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+/* 间距工具类 */
+.mt-10 { margin-top: 10rpx; }
+.mt-20 { margin-top: 20rpx; }
+.mt-30 { margin-top: 30rpx; }
+.mb-10 { margin-bottom: 10rpx; }
+.mb-20 { margin-bottom: 20rpx; }
+.mb-30 { margin-bottom: 30rpx; }
+
+/* 圆角 */
+.radius-10 { border-radius: 10rpx; }
+.radius-20 { border-radius: 20rpx; }
+.radius-circle { border-radius: 50%; }

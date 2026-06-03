@@ -1,0 +1,261 @@
+/* 我的页面样式 */
+
+.container {
+  min-height: 100vh;
+  background-color: #FFF5F8;
+  padding-bottom: 30rpx;
+}
+
+.card {
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  margin: 20rpx 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(255, 182, 193, 0.15);
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 25rpx;
+  display: block;
+}
+
+/* 宝宝信息卡片 */
+.baby-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFF8FA 100%);
+}
+
+/* 头像区域 */
+.avatar-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.avatar-wrapper {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFE4E9 0%, #FFF0F3 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 25rpx rgba(255, 182, 193, 0.3);
+}
+
+.avatar-icon {
+  font-size: 70rpx;
+}
+
+.avatar-info {
+  margin-left: 25rpx;
+}
+
+.baby-name {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333333;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.baby-age {
+  font-size: 26rpx;
+  color: #FFB6C1;
+  background-color: #FFF0F3;
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+}
+
+/* 表单 */
+.info-form {
+  background-color: #FFF8FA;
+  border-radius: 16rpx;
+  padding: 10rpx 0;
+  margin-bottom: 25rpx;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  padding: 25rpx 20rpx;
+  border-bottom: 1rpx solid #FFE4E9;
+}
+
+.form-row:last-child {
+  border-bottom: none;
+}
+
+.form-label {
+  font-size: 28rpx;
+  color: #666666;
+  width: 140rpx;
+  flex-shrink: 0;
+}
+
+.form-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333333;
+  text-align: right;
+}
+
+.picker-value {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.arrow {
+  font-size: 32rpx;
+  color: #CCCCCC;
+  margin-left: 10rpx;
+}
+
+/* 性别选择 */
+.gender-select {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15rpx;
+}
+
+.gender-item {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 20rpx;
+  border-radius: 30rpx;
+  background-color: #FFFFFF;
+  border: 2rpx solid #F0F0F0;
+}
+
+.gender-item.active {
+  background: linear-gradient(135deg, #FFE4E9 0%, #FFF0F3 100%);
+  border-color: #FFB6C1;
+}
+
+.gender-item text:first-child {
+  font-size: 28rpx;
+  margin-right: 8rpx;
+}
+
+.gender-text {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.gender-item.active .gender-text {
+  color: #FF6B8A;
+}
+
+/* 保存按钮 */
+.save-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25rpx;
+  background: linear-gradient(135deg, #FFB6C1 0%, #FFC0CB 100%);
+  border-radius: 50rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  border: none;
+  box-shadow: 0 8rpx 25rpx rgba(255, 182, 193, 0.4);
+}
+
+.save-btn text:first-child {
+  font-size: 36rpx;
+  margin-right: 10rpx;
+}
+
+/* 统计卡片 */
+.stats-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFFAF5 100%);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10rpx;
+}
+
+.stats-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 10rpx;
+  background-color: #FFF8FA;
+  border-radius: 12rpx;
+}
+
+.stats-icon {
+  font-size: 32rpx;
+  margin-bottom: 10rpx;
+}
+
+.stats-number {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #FF6B8A;
+}
+
+.stats-label {
+  font-size: 20rpx;
+  color: #999999;
+  margin-top: 5rpx;
+}
+
+/* 菜单卡片 */
+.menu-card {
+  padding: 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx;
+}
+
+.menu-item.danger .menu-icon,
+.menu-item.danger .menu-text {
+  color: #FF6B6B;
+}
+
+.menu-left {
+  display: flex;
+  align-items: center;
+}
+
+.menu-icon {
+  font-size: 32rpx;
+  margin-right: 15rpx;
+}
+
+.menu-text {
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.menu-divider {
+  height: 1rpx;
+  background-color: #F5F5F5;
+  margin: 0 30rpx;
+}
+
+/* 版本信息 */
+.version-info {
+  text-align: center;
+  padding: 40rpx;
+  font-size: 24rpx;
+  color: #CCCCCC;
+}
+
+.bottom-space {
+  height: 50rpx;
+}

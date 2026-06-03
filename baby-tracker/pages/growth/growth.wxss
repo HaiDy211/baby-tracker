@@ -1,0 +1,257 @@
+/* 成长记录页面样式 */
+
+.container {
+  min-height: 100vh;
+  background-color: #FFF5F8;
+  padding-bottom: 30rpx;
+}
+
+.card {
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  margin: 20rpx 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(255, 182, 193, 0.15);
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 25rpx;
+  display: block;
+}
+
+/* 数据输入 */
+.input-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #F0FFF0 100%);
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 25rpx 0;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+
+.input-row:last-child {
+  border-bottom: none;
+}
+
+.input-label {
+  display: flex;
+  align-items: center;
+}
+
+.label-icon {
+  font-size: 40rpx;
+  margin-right: 15rpx;
+}
+
+.label-text {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 500;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: #F8FFF8;
+  border-radius: 16rpx;
+  padding: 15rpx 25rpx;
+}
+
+.input-field {
+  width: 120rpx;
+  text-align: right;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #32CD32;
+  border: none;
+  background: transparent;
+}
+
+.input-unit {
+  font-size: 26rpx;
+  color: #999999;
+  margin-left: 10rpx;
+}
+
+/* 时间选择 */
+.time-input {
+  display: flex;
+  gap: 20rpx;
+}
+
+.picker-value {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 25rpx;
+  background-color: #F8FFF8;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.arrow {
+  font-size: 32rpx;
+  color: #CCCCCC;
+}
+
+/* 图表卡片 */
+.chart-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #F5FFF5 100%);
+}
+
+.chart-tabs {
+  display: flex;
+  gap: 15rpx;
+  margin-bottom: 25rpx;
+}
+
+.chart-tab {
+  flex: 1;
+  text-align: center;
+  padding: 15rpx 20rpx;
+  border-radius: 30rpx;
+  background-color: #F0FFF0;
+  font-size: 26rpx;
+  color: #666666;
+  transition: all 0.3s;
+}
+
+.chart-tab.active {
+  background: linear-gradient(135deg, #98FB98 0%, #90EE90 100%);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.chart-wrapper {
+  position: relative;
+  min-height: 200rpx;
+  margin-bottom: 20rpx;
+}
+
+.chart-empty {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #CCCCCC;
+  font-size: 26rpx;
+}
+
+/* 最新数据 */
+.latest-data {
+  display: flex;
+  gap: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx dashed #E0E0E0;
+}
+
+.latest-item {
+  flex: 1;
+  text-align: center;
+  padding: 15rpx;
+  background-color: #F0FFF0;
+  border-radius: 12rpx;
+}
+
+.latest-label {
+  display: block;
+  font-size: 22rpx;
+  color: #999999;
+  margin-bottom: 5rpx;
+}
+
+.latest-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #32CD32;
+}
+
+/* 备注 */
+.note-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAFFF0 100%);
+}
+
+.note-input {
+  width: 100%;
+  min-height: 120rpx;
+  padding: 20rpx;
+  background-color: #F8FFF8;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  color: #333333;
+  box-sizing: border-box;
+}
+
+/* 提交按钮 */
+.submit-btn-wrapper {
+  padding: 30rpx;
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25rpx;
+  background: linear-gradient(135deg, #98FB98 0%, #90EE90 100%);
+  border-radius: 50rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  border: none;
+  box-shadow: 0 8rpx 25rpx rgba(152, 251, 152, 0.4);
+}
+
+.submit-btn text:first-child {
+  font-size: 36rpx;
+  margin-right: 10rpx;
+}
+
+/* 历史记录 */
+.history-card {
+  margin-top: 30rpx;
+}
+
+.history-list {
+  margin-top: 10rpx;
+}
+
+.history-item {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.history-date {
+  font-size: 24rpx;
+  color: #999999;
+  margin-bottom: 10rpx;
+}
+
+.history-data {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+}
+
+.data-tag {
+  font-size: 24rpx;
+  padding: 8rpx 16rpx;
+  background-color: #E8FFE8;
+  color: #32CD32;
+  border-radius: 8rpx;
+}
+
+.bottom-space {
+  height: 50rpx;
+}

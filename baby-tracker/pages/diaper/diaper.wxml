@@ -1,0 +1,106 @@
+<view class="container">
+  <!-- 尿布状态选择 -->
+  <view class="card status-card">
+    <text class="section-title">尿布状态</text>
+    <view class="status-grid">
+      <view 
+        class="status-item {{wet ? 'active' : ''}}"
+        bindtap="toggleWet"
+        data-type="wet"
+      >
+        <view class="status-icon">
+          <text>💧</text>
+        </view>
+        <text class="status-label">湿尿布</text>
+        <view class="status-check" wx:if="{{wet}}">
+          <text>✓</text>
+        </view>
+      </view>
+      
+      <view 
+        class="status-item {{dirty ? 'active' : ''}}"
+        bindtap="toggleDirty"
+        data-type="dirty"
+      >
+        <view class="status-icon">
+          <text>💩</text>
+        </view>
+        <text class="status-label">脏尿布</text>
+        <view class="status-check" wx:if="{{dirty}}">
+          <text>✓</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 状态提示 -->
+    <view class="status-tip">
+      <text wx:if="{{wet && dirty}}">🟡 混合（湿+脏）</text>
+      <text wx:elif="{{wet && !dirty}}">🔵 仅湿尿布</text>
+      <text wx:elif="{{!wet && dirty}}">🟤 仅脏尿布</text>
+      <text wx:else class="tip-warning">⚠️ 请至少选择一种状态</text>
+    </view>
+  </view>
+
+  <!-- 记录时间 -->
+  <view class="card time-card">
+    <text class="section-title">记录时间</text>
+    <view class="time-input">
+      <picker mode="date" value="{{recordDate}}" bindchange="bindDateChange">
+        <view class="picker-value">
+          <text>{{recordDate}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+      <picker mode="time" value="{{recordTime}}" bindchange="bindTimeChange">
+        <view class="picker-value">
+          <text>{{recordTime}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card note-card">
+    <text class="section-title">备注（选填）</text>
+    <textarea 
+      class="note-input"
+      placeholder="可以记录尿布颜色、性状等..."
+      value="{{note}}"
+      bindinput="inputNote"
+      maxlength="200"
+    />
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-btn-wrapper">
+    <button class="submit-btn" bindtap="submitRecord">
+      <text>💾</text>
+      <text>保存记录</text>
+    </button>
+  </view>
+
+  <!-- 最近记录 -->
+  <view class="card recent-card" wx:if="{{recentRecords.length > 0}}">
+    <text class="section-title">最近记录</text>
+    <view class="recent-list">
+      <view 
+        wx:for="{{recentRecords}}" 
+        wx:key="id"
+        class="recent-item"
+        bindlongpress="onLongPressRecord"
+        data-id="{{item.id}}"
+      >
+        <view class="recent-icon">
+          <text>🧷</text>
+        </view>
+        <view class="recent-content">
+          <text class="recent-detail">{{item.detail}}</text>
+          <text class="recent-time">{{item.relativeTime}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-space"></view>
+</view>

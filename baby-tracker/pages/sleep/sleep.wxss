@@ -1,0 +1,235 @@
+/* 睡眠记录页面样式 */
+
+.container {
+  min-height: 100vh;
+  background-color: #FFF5F8;
+  padding-bottom: 30rpx;
+}
+
+.card {
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  margin: 20rpx 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(255, 182, 193, 0.15);
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+  display: block;
+}
+
+/* 状态切换 */
+.status-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #F8F5FF 100%);
+}
+
+.status-toggle {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.toggle-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30rpx 20rpx;
+  border-radius: 20rpx;
+  background-color: #FFFFFF;
+  border: 3rpx solid transparent;
+  transition: all 0.3s;
+}
+
+.toggle-item.active {
+  background: linear-gradient(135deg, #E6E6FA 0%, #F0F0FF 100%);
+  border-color: #DDA0DD;
+}
+
+.toggle-icon {
+  font-size: 56rpx;
+  margin-bottom: 15rpx;
+}
+
+.toggle-label {
+  font-size: 26rpx;
+  color: #666666;
+  font-weight: 500;
+}
+
+.toggle-item.active .toggle-label {
+  color: #9370DB;
+}
+
+/* 时间卡片 */
+.time-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFFAF5 100%);
+}
+
+.time-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.time-hint {
+  font-size: 32rpx;
+}
+
+.time-input {
+  display: flex;
+  gap: 20rpx;
+}
+
+.picker-value {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 25rpx;
+  background-color: #FFF8FA;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.arrow {
+  font-size: 32rpx;
+  color: #CCCCCC;
+}
+
+/* 醒来卡片 */
+.wake-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #F5FFFA 100%);
+}
+
+/* 时长显示 */
+.duration-card {
+  text-align: center;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFF5FF 100%);
+}
+
+.duration-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30rpx 0;
+}
+
+.duration-icon {
+  font-size: 56rpx;
+  margin-right: 20rpx;
+}
+
+.duration-value {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #9370DB;
+}
+
+.duration-tip {
+  font-size: 24rpx;
+  color: #999999;
+  margin-top: 10rpx;
+}
+
+.duration-tip.error {
+  color: #FF6B6B;
+}
+
+/* 备注 */
+.note-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAFAFF 100%);
+}
+
+.note-input {
+  width: 100%;
+  min-height: 150rpx;
+  padding: 20rpx;
+  background-color: #FFF8FA;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  color: #333333;
+  box-sizing: border-box;
+  margin-top: 10rpx;
+}
+
+/* 提交按钮 */
+.submit-btn-wrapper {
+  padding: 30rpx;
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25rpx;
+  background: linear-gradient(135deg, #DDA0DD 0%, #E6E6FA 100%);
+  border-radius: 50rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  border: none;
+  box-shadow: 0 8rpx 25rpx rgba(221, 160, 221, 0.4);
+}
+
+.submit-btn text:first-child {
+  font-size: 36rpx;
+  margin-right: 10rpx;
+}
+
+/* 最近记录 */
+.recent-card {
+  margin-top: 30rpx;
+}
+
+.recent-list {
+  margin-top: 10rpx;
+}
+
+.recent-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+
+.recent-item:last-child {
+  border-bottom: none;
+}
+
+.recent-icon {
+  width: 70rpx;
+  height: 70rpx;
+  border-radius: 50%;
+  background-color: #E6E6FA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+
+.recent-content {
+  flex: 1;
+  margin-left: 20rpx;
+}
+
+.recent-detail {
+  font-size: 28rpx;
+  color: #333333;
+  display: block;
+  margin-bottom: 5rpx;
+}
+
+.recent-time {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.bottom-space {
+  height: 50rpx;
+}
