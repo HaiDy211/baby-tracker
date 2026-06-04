@@ -11,21 +11,25 @@ App({
   },
 
   onLaunch: function () {
-    // 初始化云开发
-    if (!this.globalData.envId) {
-      console.warn('请在 app.js 中设置云开发环境ID')
-    }
-    
-    wx.cloud.init({
-      env: this.globalData.envId || 'demo-env',
-      traceUser: true,
-    })
-
     // 加载本地缓存的宝宝信息
     this.loadBabyInfo()
     
     // 加载本地缓存的记录
     this.loadLocalRecords()
+    
+    // 初始化云开发（延迟执行，避免阻塞）
+    if (this.globalData.envId) {
+      try {
+        wx.cloud.init({
+          env: this.globalData.envId,
+          traceUser: true,
+        })
+      } catch (e) {
+        console.log('云开发初始化失败，使用本地存储', e)
+      }
+    } else {
+      console.log('未配置云开发环境ID，使用本地存储')
+    }
   },
 
   // 加载宝宝信息
