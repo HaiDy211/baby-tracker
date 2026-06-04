@@ -1,13 +1,12 @@
 // 数据库操作封装
 
-const app = getApp()
-
 // 云数据库引用
 let db = null
 
 // 初始化数据库
 function initDB() {
-  if (!db && app.globalData.envId) {
+  const app = getApp()
+  if (!db && app && app.globalData && app.globalData.envId) {
     db = wx.cloud.database({
       env: app.globalData.envId
     })
