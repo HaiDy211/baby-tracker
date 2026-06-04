@@ -189,13 +189,23 @@ Page({
   // 点击记录编辑
   onTapRecord: function(e) {
     const recordId = e.currentTarget.dataset.id
+    console.log('点击记录:', recordId)
+    
+    if (!recordId) {
+      wx.showToast({ title: '记录ID无效', icon: 'none' })
+      return
+    }
+    
     const record = this.data.recentRecords.find(r => r.id === recordId)
-    if (!record) return
+    if (!record) {
+      wx.showToast({ title: '记录不存在', icon: 'none' })
+      return
+    }
 
     // 解析日期和时间
     const dateTime = record.createdAt.split(' ')
     const date = dateTime[0]
-    const time = dateTime[1].substring(0, 5)
+    const time = dateTime[1] ? dateTime[1].substring(0, 5) : '00:00'
 
     this.setData({
       isEditing: true,
@@ -206,6 +216,8 @@ Page({
       recordTime: time,
       note: record.note || ''
     })
+    
+    wx.showToast({ title: '已加载记录，可编辑', icon: 'none', duration: 1000 })
   },
 
   // 删除当前编辑的记录
