@@ -48,7 +48,7 @@ Page({
   // 初始化图表
   initChart: function() {
     const that = this
-    wx.getSystemInfo({
+    wx.getDeviceInfo()({
       success: function(res) {
         that.setData({
           canvasWidth: res.windowWidth - 80,
@@ -122,7 +122,7 @@ Page({
         
         const canvas = res[0].node
         const ctx = canvas.getContext('2d')
-        const dpr = wx.getSystemInfoSync().pixelRatio
+        const dpr = wx.getDeviceInfo().pixelRatio
         
         // 设置canvas尺寸
         canvas.width = res[0].width * dpr

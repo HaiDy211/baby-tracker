@@ -49,7 +49,7 @@
     "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.25.0",
+  "libVersion": "3.16.1",
   "appid": "wx46c28d9106d89526",
   "projectname": "baby-tracker",
   "condition": {},
