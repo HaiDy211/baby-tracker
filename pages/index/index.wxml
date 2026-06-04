@@ -1,12 +1,3 @@
-<wxs module="util">
-module.exports = {
-  getDate: function() {
-    var now = getDate();
-    return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-  }
-}
-</wxs>
-
 <view class="container">
   <!-- 顶部问候 -->
   <view class="header">
@@ -135,6 +126,10 @@ module.exports = {
   formatDate: function(date) {
     const months = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
     return months[date.getMonth()] + date.getDate() + '日'
+  },
+  getDate: function() {
+    var now = getDate();
+    return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
   }
 }
 </wxs>
