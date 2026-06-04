@@ -1,3 +1,12 @@
+<wxs module="util">
+module.exports = {
+  getDate: function() {
+    var now = getDate();
+    return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  }
+}
+</wxs>
+
 <view class="container">
   <!-- 顶部问候 -->
   <view class="header">
@@ -5,7 +14,7 @@
       <text class="greeting-text">你好，</text>
       <text class="baby-name">{{babyName}}</text>
     </view>
-    <text class="date">{{util.formatDate(new Date)}}</text>
+    <text class="date">{{util.getDate()}}</text>
   </view>
 
   <!-- 今日统计卡片 -->
