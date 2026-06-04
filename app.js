@@ -71,7 +71,7 @@ App({
       db.addRecord(record).then(res => {
         if (callback) callback({ success: true, fromCloud: true })
       }).catch(err => {
-        console.log('云同步失败，使用本地存储', err)
+        // 集合不存在或云同步失败，静默使用本地存储
         if (callback) callback({ success: true, fromCloud: false })
       })
     } else {
