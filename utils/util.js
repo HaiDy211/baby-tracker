@@ -46,7 +46,9 @@ function calculateDuration(startTime, endTime) {
 // 获取相对时间描述
 function getRelativeTime(date) {
   const now = new Date()
-  const diff = now - new Date(date)
+  // iOS 不支持 "YYYY-MM-DD HH:mm" 格式，需要转换为 "YYYY-MM-DDTHH:mm:00"
+  const iosCompatibleDate = typeof date === 'string' ? date.replace(' ', 'T') + ':00' : date
+  const diff = now - new Date(iosCompatibleDate)
   const minutes = Math.floor(diff / 60000)
   const hours = Math.floor(diff / 3600000)
   const days = Math.floor(diff / 86400000)
@@ -55,13 +57,14 @@ function getRelativeTime(date) {
   if (minutes < 60) return `${minutes}分钟前`
   if (hours < 24) return `${hours}小时前`
   if (days < 7) return `${days}天前`
-  return formatDate(new Date(date))
+  return formatDate(new Date(iosCompatibleDate))
 }
 
 // 获取星期几
 function getWeekday(date) {
   const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
-  return weekdays[new Date(date).getDay()]
+  const iosCompatibleDate = typeof date === 'string' ? date.replace(' ', 'T') + ':00' : date
+  return weekdays[new Date(iosCompatibleDate).getDay()]
 }
 
 // 判断是否是今天
