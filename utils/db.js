@@ -31,13 +31,7 @@ function addRecord(record) {
     }).then(res => {
       resolve(res)
     }).catch(err => {
-      // 集合不存在时降级到本地存储
-      if (err.errCode === -502005) {
-        console.log('云数据库集合不存在，降级到本地存储')
-        reject(new Error('collection_not_exists'))
-      } else {
-        reject(err)
-      }
+      reject(err)
     })
   })
 }
