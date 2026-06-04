@@ -140,10 +140,10 @@
 <wxs module="util">
 module.exports = {
   getFriendlyDate: function(dateStr) {
-    var date = new Date(dateStr);
-    var now = new Date();
+    var date = getDate(dateStr);
+    var now = getDate();
     var today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-    var yesterday = new Date(now);
+    var yesterday = getDate(now);
     yesterday.setDate(yesterday.getDate() - 1);
     var yesterdayStr = yesterday.getFullYear() + '-' + String(yesterday.getMonth() + 1).padStart(2, '0') + '-' + String(yesterday.getDate()).padStart(2, '0');
     
