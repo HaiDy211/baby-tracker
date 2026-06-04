@@ -91,11 +91,24 @@
   </view>
 
   <!-- 提交按钮 -->
-  <view class="submit-btn-wrapper">
+  <view class="submit-btn-wrapper" wx:if="{{!isEditing}}">
     <button class="submit-btn" bindtap="submitRecord">
       <text>💾</text>
       <text wx:if="{{sleepStatus === 'sleeping'}}">记录入睡</text>
       <text wx:else>记录醒来</text>
+    </button>
+  </view>
+
+  <!-- 编辑模式按钮 -->
+  <view class="edit-btn-wrapper" wx:if="{{isEditing}}">
+    <button class="cancel-btn" bindtap="cancelEdit">
+      <text>取消</text>
+    </button>
+    <button class="delete-btn" bindtap="deleteEditingRecord">
+      <text>🗑️ 删除</text>
+    </button>
+    <button class="save-btn" bindtap="submitRecord">
+      <text>💾 保存</text>
     </button>
   </view>
 
@@ -106,7 +119,8 @@
       <view 
         wx:for="{{recentRecords}}" 
         wx:key="id"
-        class="recent-item"
+        class="recent-item {{editingRecordId === item.id ? 'active' : ''}}"
+        bindtap="onTapRecord"
         bindlongpress="onLongPressRecord"
         data-id="{{item.id}}"
       >

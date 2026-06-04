@@ -100,6 +100,30 @@ App({
     }
   },
 
+  // 更新记录
+  updateRecord: function (recordId, updates, callback) {
+    // 更新本地记录
+    let localRecords = wx.getStorageSync('localRecords') || []
+    const index = localRecords.findIndex(r => r.id === recordId)
+    if (index !== -1) {
+      localRecords[index] = { ...localRecords[index], ...updates }
+      wx.setStorageSync('localRecords', localRecords)
+      this.globalData.localRecords = localRecords
+    }
+
+    // 尝试同步到云端
+    if (this.globalData.envId) {
+      db.updateRecord(recordId, updates).then(res => {
+        if (callback) callback({ success: true, fromCloud: true })
+      }).catch(err => {
+        console.log('云同步失败，使用本地存储', err)
+        if (callback) callback({ success: true, fromCloud: false })
+      })
+    } else {
+      if (callback) callback({ success: true, fromCloud: false })
+    }
+  },
+
   // 获取今日统计
   getTodayStats: function () {
     const records = wx.getStorageSync('localRecords') || []

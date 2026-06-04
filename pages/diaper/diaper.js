@@ -13,7 +13,10 @@ Page({
     // 备注
     note: '',
     // 最近记录
-    recentRecords: []
+    recentRecords: [],
+    // 编辑状态
+    isEditing: false,
+    editingRecordId: ''
   },
 
   onLoad: function() {
@@ -84,7 +87,7 @@ Page({
 
   // 提交记录
   submitRecord: function() {
-    const { wet, dirty, recordTime, recordDate, note } = this.data
+    const { wet, dirty, recordTime, recordDate, note, isEditing, editingRecordId } = this.data
     
     // 至少选择一种状态
     if (!wet && !dirty) {
@@ -104,23 +107,25 @@ Page({
       note: note
     }
 
-    app.saveRecord(record, (result) => {
+    const saveCallback = (result) => {
       if (result.success) {
         wx.showToast({
-          title: '记录成功',
+          title: isEditing ? '已更新' : '记录成功',
           icon: 'success'
         })
         
         setTimeout(() => {
-          wx.navigateBack({
-            delta: 1,
-            fail: function() {
-              wx.switchTab({ url: '/pages/index/index' })
-            }
-          })
-        }, 1500)
+          this.resetForm()
+          this.loadRecentRecords()
+        }, 1000)
       }
-    })
+    }
+
+    if (isEditing && editingRecordId) {
+      app.updateRecord(editingRecordId, record, saveCallback)
+    } else {
+      app.saveRecord(record, saveCallback)
+    }
   },
 
   // 长按删除记录
@@ -146,5 +151,69 @@ Page({
         }
       }
     })
+  },
+
+  // 点击记录编辑
+  onTapRecord: function(e) {
+    const recordId = e.currentTarget.dataset.id
+    const record = this.data.recentRecords.find(r => r.id === recordId)
+    if (!record) return
+
+    const dateTime = record.createdAt.split(' ')
+    const date = dateTime[0]
+    const time = dateTime[1].substring(0, 5)
+
+    this.setData({
+      isEditing: true,
+      editingRecordId: recordId,
+      wet: record.wet || false,
+      dirty: record.dirty || false,
+      recordDate: date,
+      recordTime: time,
+      note: record.note || ''
+    })
+  },
+
+  // 删除当前编辑的记录
+  deleteEditingRecord: function() {
+    if (!this.data.editingRecordId) return
+    
+    const that = this
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这条记录吗？',
+      confirmColor: '#FF6B8A',
+      success: function(res) {
+        if (res.confirm) {
+          app.deleteRecord(that.data.editingRecordId, function(result) {
+            if (result.success) {
+              that.resetForm()
+              that.loadRecentRecords()
+              wx.showToast({
+                title: '已删除',
+                icon: 'success'
+              })
+            }
+          })
+        }
+      }
+    })
+  },
+
+  // 取消编辑
+  cancelEdit: function() {
+    this.resetForm()
+  },
+
+  // 重置表单
+  resetForm: function() {
+    this.setData({
+      isEditing: false,
+      editingRecordId: '',
+      wet: true,
+      dirty: false,
+      note: ''
+    })
+    this.initTime()
   }
 })

@@ -21,7 +21,10 @@ Page({
       { value: 'bottle', label: '奶瓶喂养', icon: '🍼' }
     ],
     // 最近记录
-    recentRecords: []
+    recentRecords: [],
+    // 编辑状态
+    isEditing: false,
+    editingRecordId: ''
   },
 
   onLoad: function() {
@@ -113,7 +116,7 @@ Page({
 
   // 提交记录
   submitRecord: function() {
-    const { feedMethod, bottleAmount, recordTime, recordDate, note } = this.data
+    const { feedMethod, bottleAmount, recordTime, recordDate, note, isEditing, editingRecordId } = this.data
     
     // 验证
     if (feedMethod === 'bottle' && (!bottleAmount || bottleAmount <= 0)) {
@@ -127,7 +130,7 @@ Page({
     const record = {
       type: 'feed',
       method: feedMethod,
-      sleepTime: `${recordDate} ${recordTime}:00`, // 用于兼容睡眠记录的字段
+      sleepTime: `${recordDate} ${recordTime}:00`,
       createdAt: `${recordDate} ${recordTime}:00`,
       note: note
     }
@@ -136,24 +139,26 @@ Page({
       record.amount = parseInt(bottleAmount)
     }
 
-    app.saveRecord(record, (result) => {
+    const saveCallback = (result) => {
       if (result.success) {
         wx.showToast({
-          title: '记录成功',
+          title: isEditing ? '已更新' : '记录成功',
           icon: 'success'
         })
         
-        // 延迟返回，让用户看到成功提示
         setTimeout(() => {
-          wx.navigateBack({
-            delta: 1,
-            fail: function() {
-              wx.switchTab({ url: '/pages/index/index' })
-            }
-          })
-        }, 1500)
+          this.resetForm()
+          this.loadRecentRecords()
+        }, 1000)
       }
-    })
+    }
+
+    // 判断是新增还是更新
+    if (isEditing && editingRecordId) {
+      app.updateRecord(editingRecordId, record, saveCallback)
+    } else {
+      app.saveRecord(record, saveCallback)
+    }
   },
 
   // 长按删除记录
@@ -179,5 +184,70 @@ Page({
         }
       }
     })
+  },
+
+  // 点击记录编辑
+  onTapRecord: function(e) {
+    const recordId = e.currentTarget.dataset.id
+    const record = this.data.recentRecords.find(r => r.id === recordId)
+    if (!record) return
+
+    // 解析日期和时间
+    const dateTime = record.createdAt.split(' ')
+    const date = dateTime[0]
+    const time = dateTime[1].substring(0, 5)
+
+    this.setData({
+      isEditing: true,
+      editingRecordId: recordId,
+      feedMethod: record.method || 'breast-left',
+      bottleAmount: record.amount || 120,
+      recordDate: date,
+      recordTime: time,
+      note: record.note || ''
+    })
+  },
+
+  // 删除当前编辑的记录
+  deleteEditingRecord: function() {
+    if (!this.data.editingRecordId) return
+    
+    const that = this
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这条记录吗？',
+      confirmColor: '#FF6B8A',
+      success: function(res) {
+        if (res.confirm) {
+          app.deleteRecord(that.data.editingRecordId, function(result) {
+            if (result.success) {
+              that.resetForm()
+              that.loadRecentRecords()
+              wx.showToast({
+                title: '已删除',
+                icon: 'success'
+              })
+            }
+          })
+        }
+      }
+    })
+  },
+
+  // 取消编辑
+  cancelEdit: function() {
+    this.resetForm()
+  },
+
+  // 重置表单
+  resetForm: function() {
+    this.setData({
+      isEditing: false,
+      editingRecordId: '',
+      feedMethod: 'breast-left',
+      bottleAmount: 120,
+      note: ''
+    })
+    this.initTime()
   }
 })
