@@ -27,9 +27,14 @@ Page({
     editingRecordId: ''
   },
 
-  onLoad: function() {
+  onLoad: function(options) {
     this.initTime()
     this.loadRecentRecords()
+    
+    // 如果有 recordId 参数，说明是从记录列表进入编辑的
+    if (options.recordId) {
+      this.loadRecordForEdit(options.recordId)
+    }
   },
 
   onShow: function() {
@@ -60,6 +65,26 @@ Page({
     this.setData({ recentRecords: feedRecords })
   },
 
+  // 加载记录用于编辑
+  loadRecordForEdit: function(recordId) {
+    const records = wx.getStorageSync('localRecords') || []
+    const record = records.find(r => r.id === recordId)
+    if (!record || record.type !== 'feed') return
+
+    const dateTime = record.createdAt.split(' ')
+    const date = dateTime[0]
+    const time = dateTime[1] ? dateTime[1].substring(0, 5) : '00:00'
+
+    this.setData({
+      isEditing: true,
+      editingRecordId: recordId,
+      feedMethod: record.method || 'breast-left',
+      bottleAmount: record.amount || 120,
+      recordDate: date,
+      recordTime: time,
+      note: record.note || ''
+    })
+  },
   // 获取记录详情
   getRecordDetail: function(record) {
     if (record.method === 'bottle') {
@@ -184,40 +209,6 @@ Page({
         }
       }
     })
-  },
-
-  // 点击记录编辑
-  onTapRecord: function(e) {
-    const recordId = e.currentTarget.dataset.id
-    console.log('点击记录:', recordId)
-    
-    if (!recordId) {
-      wx.showToast({ title: '记录ID无效', icon: 'none' })
-      return
-    }
-    
-    const record = this.data.recentRecords.find(r => r.id === recordId)
-    if (!record) {
-      wx.showToast({ title: '记录不存在', icon: 'none' })
-      return
-    }
-
-    // 解析日期和时间
-    const dateTime = record.createdAt.split(' ')
-    const date = dateTime[0]
-    const time = dateTime[1] ? dateTime[1].substring(0, 5) : '00:00'
-
-    this.setData({
-      isEditing: true,
-      editingRecordId: recordId,
-      feedMethod: record.method || 'breast-left',
-      bottleAmount: record.amount || 120,
-      recordDate: date,
-      recordTime: time,
-      note: record.note || ''
-    })
-    
-    wx.showToast({ title: '已加载记录，可编辑', icon: 'none', duration: 1000 })
   },
 
   // 删除当前编辑的记录

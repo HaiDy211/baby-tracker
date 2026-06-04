@@ -22,6 +22,14 @@ Page({
   onLoad: function() {
     this.initTime()
     this.loadRecentRecords()
+
+    if (getApp().globalData) {
+      const app = getApp()
+      if (app.globalData.editRecordId) {
+        this.loadRecordForEdit(app.globalData.editRecordId)
+        app.globalData.editRecordId = null
+      }
+    }
   },
 
   onShow: function() {
@@ -50,6 +58,27 @@ Page({
         detail: this.getRecordDetail(r)
       }))
     this.setData({ recentRecords: diaperRecords })
+  },
+
+  // 加载记录用于编辑
+  loadRecordForEdit: function(recordId) {
+    const records = wx.getStorageSync('localRecords') || []
+    const record = records.find(r => r.id === recordId)
+    if (!record || record.type !== 'diaper') return
+
+    const dateTime = record.createdAt.split(' ')
+    const date = dateTime[0]
+    const time = dateTime[1] ? dateTime[1].substring(0, 5) : '00:00'
+
+    this.setData({
+      isEditing: true,
+      editingRecordId: recordId,
+      wet: record.wet || false,
+      dirty: record.dirty || false,
+      recordDate: date,
+      recordTime: time,
+      note: record.note || ''
+    })
   },
 
   // 获取记录详情
@@ -150,27 +179,6 @@ Page({
           })
         }
       }
-    })
-  },
-
-  // 点击记录编辑
-  onTapRecord: function(e) {
-    const recordId = e.currentTarget.dataset.id
-    const record = this.data.recentRecords.find(r => r.id === recordId)
-    if (!record) return
-
-    const dateTime = record.createdAt.split(' ')
-    const date = dateTime[0]
-    const time = dateTime[1].substring(0, 5)
-
-    this.setData({
-      isEditing: true,
-      editingRecordId: recordId,
-      wet: record.wet || false,
-      dirty: record.dirty || false,
-      recordDate: date,
-      recordTime: time,
-      note: record.note || ''
     })
   },
 

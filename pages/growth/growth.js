@@ -32,6 +32,11 @@ Page({
     this.initTime()
     this.loadRecentRecords()
     this.initChart()
+
+    if (getApp().globalData && getApp().globalData.editRecordId) {
+      this.loadRecordForEdit(getApp().globalData.editRecordId)
+      getApp().globalData.editRecordId = null
+    }
   },
 
   onShow: function() {
@@ -74,6 +79,28 @@ Page({
       }))
     this.setData({ recentRecords: growthRecords })
     this.updateChart()
+  },
+
+  // 加载记录用于编辑
+  loadRecordForEdit: function(recordId) {
+    const records = wx.getStorageSync('localRecords') || []
+    const record = records.find(r => r.id === recordId)
+    if (!record || record.type !== 'growth') return
+
+    const dateTime = record.createdAt.split(' ')
+    const date = dateTime[0]
+    const time = dateTime[1] ? dateTime[1].substring(0, 5) : '00:00'
+
+    this.setData({
+      isEditing: true,
+      editingRecordId: recordId,
+      weight: record.weight ? String(record.weight) : '',
+      height: record.height ? String(record.height) : '',
+      headCircumference: record.headCircumference ? String(record.headCircumference) : '',
+      recordDate: date,
+      recordTime: time,
+      note: record.note || ''
+    })
   },
 
   // 更新图表数据
@@ -345,28 +372,6 @@ Page({
           })
         }
       }
-    })
-  },
-
-  // 点击记录编辑
-  onTapRecord: function(e) {
-    const recordId = e.currentTarget.dataset.id
-    const record = this.data.recentRecords.find(r => r.id === recordId)
-    if (!record) return
-
-    const dateTime = record.createdAt.split(' ')
-    const date = dateTime[0]
-    const time = dateTime[1].substring(0, 5)
-
-    this.setData({
-      isEditing: true,
-      editingRecordId: recordId,
-      weight: record.weight ? String(record.weight) : '',
-      height: record.height ? String(record.height) : '',
-      headCircumference: record.headCircumference ? String(record.headCircumference) : '',
-      recordDate: date,
-      recordTime: time,
-      note: record.note || ''
     })
   },
 

@@ -177,7 +177,6 @@
         wx:for="{{recentRecords}}" 
         wx:key="id"
         class="history-item {{editingRecordId === item.id ? 'active' : ''}}"
-        bindtap="onTapRecord"
         bindlongpress="onLongPressRecord"
         data-id="{{item.id}}"
       >

@@ -93,8 +93,10 @@
         wx:for="{{recentRecords}}" 
         wx:key="id" 
         class="recent-item"
+        bindtap="onTapRecord"
         bindlongpress="onLongPressRecord"
         data-id="{{item.id}}"
+        data-type="{{item.type}}"
       >
         <view class="recent-icon" style="background-color: {{item.color}}20;">
           <text style="font-size: 36rpx;">{{item.icon}}</text>

@@ -128,6 +128,23 @@ Page({
     })
   },
 
+  // 点击记录跳转到编辑页面
+  onTapRecord: function(e) {
+    const recordId = e.currentTarget.dataset.id
+    const type = e.currentTarget.dataset.type
+    
+    const pages = {
+      feed: '/pages/feed/feed',
+      diaper: '/pages/diaper/diaper',
+      sleep: '/pages/sleep/sleep',
+      growth: '/pages/growth/growth'
+    }
+    
+    wx.navigateTo({
+      url: `${pages[type]}?recordId=${recordId}`
+    })
+  },
+
   // 获取记录详情文本
   getRecordDetail: function(record) {
     switch (record.type) {

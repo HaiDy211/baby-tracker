@@ -24,14 +24,16 @@ Page({
   },
 
   onLoad: function(options) {
-    // 检查是否从首页快捷按钮进入（默认记录入睡）
-    const type = options.type
-    if (type === 'wakeup') {
+    if (options.type === 'wakeup') {
       this.setData({ sleepStatus: 'wokeup' })
     }
     
     this.initTime()
     this.loadRecentRecords()
+
+    if (options.recordId) {
+      this.loadRecordForEdit(options.recordId)
+    }
   },
 
   onShow: function() {
@@ -67,6 +69,38 @@ Page({
         detail: this.getRecordDetail(r)
       }))
     this.setData({ recentRecords: sleepRecords })
+  },
+
+  // 加载记录用于编辑
+  loadRecordForEdit: function(recordId) {
+    const records = wx.getStorageSync('localRecords') || []
+    const record = records.find(r => r.id === recordId)
+    if (!record || record.type !== 'sleep') return
+
+    const sleepDateTime = record.sleepTime ? record.sleepTime.split(' ') : record.createdAt.split(' ')
+    const sleepDate = sleepDateTime[0]
+    const sleepTime = sleepDateTime[1] ? sleepDateTime[1].substring(0, 5) : '00:00'
+
+    let wakeDate = sleepDate, wakeTime = sleepTime, sleepStatus = 'sleeping'
+    
+    if (record.wakeTime) {
+      const wakeDateTime = record.wakeTime.split(' ')
+      wakeDate = wakeDateTime[0]
+      wakeTime = wakeDateTime[1].substring(0, 5)
+      sleepStatus = 'wokeup'
+    }
+
+    this.setData({
+      isEditing: true,
+      editingRecordId: recordId,
+      sleepStatus: sleepStatus,
+      sleepDate: sleepDate,
+      sleepTime: sleepTime,
+      wakeDate: wakeDate,
+      wakeTime: wakeTime,
+      note: record.note || ''
+    })
+    this.updateDuration()
   },
 
   // 获取记录详情
@@ -203,42 +237,6 @@ Page({
         }
       }
     })
-  },
-
-  // 点击记录编辑
-  onTapRecord: function(e) {
-    const recordId = e.currentTarget.dataset.id
-    const record = this.data.recentRecords.find(r => r.id === recordId)
-    if (!record) return
-
-    // 解析入睡时间
-    const sleepDateTime = record.sleepTime.split(' ')
-    const sleepDate = sleepDateTime[0]
-    const sleepTime = sleepDateTime[1].substring(0, 5)
-
-    // 解析醒来时间（如果有）
-    let wakeDate = sleepDate
-    let wakeTime = sleepTime
-    let sleepStatus = 'sleeping'
-    
-    if (record.wakeTime) {
-      const wakeDateTime = record.wakeTime.split(' ')
-      wakeDate = wakeDateTime[0]
-      wakeTime = wakeDateTime[1].substring(0, 5)
-      sleepStatus = 'wokeup'
-    }
-
-    this.setData({
-      isEditing: true,
-      editingRecordId: recordId,
-      sleepStatus: sleepStatus,
-      sleepDate: sleepDate,
-      sleepTime: sleepTime,
-      wakeDate: wakeDate,
-      wakeTime: wakeTime,
-      note: record.note || ''
-    })
-    this.updateDuration()
   },
 
   // 删除当前编辑的记录
