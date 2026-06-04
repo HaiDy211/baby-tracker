@@ -7,7 +7,7 @@ App({
   globalData: {
     userInfo: null,
     babyInfo: null,
-    envId: '', // 云开发环境ID，由用户填写
+    envId: 'wx46c28d9106d89526', // 云开发环境ID，由用户填写
   },
 
   onLaunch: function () {
