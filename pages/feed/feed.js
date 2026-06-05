@@ -20,8 +20,6 @@ Page({
       { value: 'breast-both', label: '双侧母乳', icon: '🤱' },
       { value: 'bottle', label: '奶瓶喂养', icon: '🍼' }
     ],
-    // 最近记录
-    recentRecords: [],
     // 编辑状态
     isEditing: false,
     editingRecordId: ''
@@ -29,17 +27,13 @@ Page({
 
   onLoad: function(options) {
     this.initTime()
-    this.loadRecentRecords()
-    
+
     // 如果有 recordId 参数，说明是从记录列表进入编辑的
     if (options.recordId) {
       this.loadRecordForEdit(options.recordId)
     }
   },
 
-  onShow: function() {
-    this.loadRecentRecords()
-  },
 
   // 初始化时间
   initTime: function() {
@@ -171,9 +165,14 @@ Page({
           icon: 'success'
         })
         
+        // 延迟返回，让用户看到成功提示
         setTimeout(() => {
-          this.resetForm()
-          this.loadRecentRecords()
+          wx.navigateBack({
+            delta: 1,
+            fail: function() {
+              isEditing ? wx.switchTab({ url: '/pages/index/index' }) : wx.switchTab({ url: '/pages/timeline/timeline' })
+            }
+          })
         }, 1000)
       }
     }
@@ -186,31 +185,7 @@ Page({
     }
   },
 
-  // 长按删除记录
-  onLongPressRecord: function(e) {
-    const recordId = e.currentTarget.dataset.id
-    const that = this
-    
-    wx.showModal({
-      title: '确认删除',
-      content: '确定要删除这条记录吗？',
-      confirmColor: '#FF6B8A',
-      success: function(res) {
-        if (res.confirm) {
-          app.deleteRecord(recordId, function(result) {
-            if (result.success) {
-              that.loadRecentRecords()
-              wx.showToast({
-                title: '已删除',
-                icon: 'success'
-              })
-            }
-          })
-        }
-      }
-    })
-  },
-
+ 
   // 删除当前编辑的记录
   deleteEditingRecord: function() {
     if (!this.data.editingRecordId) return
@@ -224,13 +199,20 @@ Page({
         if (res.confirm) {
           app.deleteRecord(that.data.editingRecordId, function(result) {
             if (result.success) {
-              that.resetForm()
-              that.loadRecentRecords()
               wx.showToast({
                 title: '已删除',
                 icon: 'success'
               })
-            }
+              // 延迟返回，让用户看到成功提示
+              setTimeout(() => {
+                wx.navigateBack({
+                  delta: 1,
+                  fail: function() {
+                    wx.switchTab({ url: '/pages/timeline/timeline' })
+                  }
+                })
+              }, 1000)
+           }
           })
         }
       }

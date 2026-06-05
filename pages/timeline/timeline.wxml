@@ -82,8 +82,10 @@
           wx:for-item="record"
           wx:key="id"
           class="record-item"
+          bindtap="onTapRecord"
           bindlongpress="onLongPressRecord"
           data-id="{{record.id}}"
+          data-type="{{record.type}}"
         >
           <!-- 时间线节点 -->
           <view class="timeline-node">

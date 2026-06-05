@@ -12,29 +12,22 @@ Page({
     recordDate: '',
     // 备注
     note: '',
-    // 最近记录
-    recentRecords: [],
+ 
     // 编辑状态
     isEditing: false,
     editingRecordId: ''
   },
 
-  onLoad: function() {
+  onLoad: function(options) {
     this.initTime()
-    this.loadRecentRecords()
 
-    if (getApp().globalData) {
-      const app = getApp()
-      if (app.globalData.editRecordId) {
-        this.loadRecordForEdit(app.globalData.editRecordId)
-        app.globalData.editRecordId = null
-      }
+    // 如果有 recordId 参数，说明是从记录列表进入编辑的
+    if (options.recordId) {
+      this.loadRecordForEdit(options.recordId)
     }
   },
 
-  onShow: function() {
-    this.loadRecentRecords()
-  },
+
 
   // 初始化时间
   initTime: function() {
@@ -45,20 +38,6 @@ Page({
     })
   },
 
-  // 加载最近记录
-  loadRecentRecords: function() {
-    const records = wx.getStorageSync('localRecords') || []
-    const diaperRecords = records
-      .filter(r => r.type === 'diaper')
-      .slice(0, 5)
-      .map(r => ({
-        ...r,
-        icon: util.getRecordTypeIcon(r.type),
-        relativeTime: util.getRelativeTime(r.createdAt),
-        detail: this.getRecordDetail(r)
-      }))
-    this.setData({ recentRecords: diaperRecords })
-  },
 
   // 加载记录用于编辑
   loadRecordForEdit: function(recordId) {
@@ -157,31 +136,7 @@ Page({
     }
   },
 
-  // 长按删除记录
-  onLongPressRecord: function(e) {
-    const recordId = e.currentTarget.dataset.id
-    const that = this
-    
-    wx.showModal({
-      title: '确认删除',
-      content: '确定要删除这条记录吗？',
-      confirmColor: '#FF6B8A',
-      success: function(res) {
-        if (res.confirm) {
-          app.deleteRecord(recordId, function(result) {
-            if (result.success) {
-              that.loadRecentRecords()
-              wx.showToast({
-                title: '已删除',
-                icon: 'success'
-              })
-            }
-          })
-        }
-      }
-    })
-  },
-
+  
   // 删除当前编辑的记录
   deleteEditingRecord: function() {
     if (!this.data.editingRecordId) return

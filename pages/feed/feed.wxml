@@ -97,27 +97,6 @@
     </button>
   </view>
 
-  <!-- 最近记录 -->
-  <view class="card recent-card" wx:if="{{recentRecords.length > 0}}">
-    <text class="section-title">最近记录</text>
-    <view class="recent-list">
-      <view 
-        wx:for="{{recentRecords}}" 
-        wx:key="id"
-        class="recent-item {{editingRecordId === item.id ? 'active' : ''}}"
-        bindlongpress="onLongPressRecord"
-        data-id="{{item.id}}"
-      >
-        <view class="recent-icon">
-          <text>🍼</text>
-        </view>
-        <view class="recent-content">
-          <text class="recent-detail">{{item.detail}}</text>
-          <text class="recent-time">{{item.relativeTime}}</text>
-        </view>
-      </view>
-    </view>
-  </view>
-
+ 
   <view class="bottom-space"></view>
 </view>
