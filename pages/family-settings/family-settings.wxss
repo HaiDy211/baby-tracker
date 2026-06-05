@@ -1,0 +1,145 @@
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 30rpx;
+}
+
+.section {
+  margin-bottom: 30rpx;
+}
+
+.section-title {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 16rpx;
+  padding-left: 10rpx;
+}
+
+.info-card {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+}
+
+.family-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+.invite-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff5f5;
+  border-radius: 12rpx;
+  padding: 20rpx 30rpx;
+}
+
+.invite-label {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.invite-code {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #FFB6C1;
+  letter-spacing: 8rpx;
+  margin: 0 20rpx;
+}
+
+.copy-btn {
+  font-size: 24rpx;
+  color: #FFB6C1;
+  padding: 10rpx 20rpx;
+  background-color: #fff;
+  border: 2rpx solid #FFB6C1;
+  border-radius: 20rpx;
+}
+
+.copy-btn::after {
+  border: none;
+}
+
+.invite-tip {
+  font-size: 22rpx;
+  color: #999;
+  text-align: center;
+  margin-top: 20rpx;
+}
+
+.member-list {
+  background-color: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.member-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 30rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.member-item:last-child {
+  border-bottom: none;
+}
+
+.member-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+}
+
+.member-info {
+  flex: 1;
+  margin-left: 20rpx;
+}
+
+.member-name {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.member-title {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.member-role {
+  font-size: 22rpx;
+  color: #FFB6C1;
+  background-color: #fff5f5;
+  padding: 6rpx 16rpx;
+  border-radius: 16rpx;
+}
+
+.action-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.arrow {
+  color: #ccc;
+  font-size: 32rpx;
+}
+
+.leave-btn {
+  text-align: center;
+  color: #ff4d4f;
+  font-size: 28rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+}

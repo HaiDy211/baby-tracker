@@ -1,76 +1,51 @@
 <view class="container">
+  <!-- 用户信息卡片 -->
+  <view class="card user-card">
+    <view class="user-info">
+      <image class="user-avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="user-detail">
+        <text class="user-name">{{userInfo.nickname || '用户'}}</text>
+        <text class="family-name" wx:if="{{familyInfo}}">{{familyInfo.name}}</text>
+      </view>
+    </view>
+  </view>
+
   <!-- 宝宝信息卡片 -->
-  <view class="card baby-card">
-    <!-- 头像区域 -->
-    <view class="avatar-section">
-      <view class="avatar-wrapper">
-        <text class="avatar-icon">{{gender === 'boy' ? '👶🏻' : gender === 'girl' ? '👧🏻' : '👶'}}</text>
+  <view class="card baby-card" bindtap="goToBabies">
+    <view class="baby-info">
+      <view class="baby-avatar">
+        <text>{{currentBaby.gender === 'boy' ? '👶🏻' : currentBaby.gender === 'girl' ? '👧🏻' : '👶'}}</text>
       </view>
-      <view class="avatar-info">
-        <text class="baby-name">{{babyName || '小宝宝'}}</text>
-        <text class="baby-age" wx:if="{{babyAge}}">{{babyAge}}</text>
+      <view class="baby-detail">
+        <text class="baby-name">{{currentBaby.name || '请添加宝宝'}}</text>
+        <text class="baby-age" wx:if="{{currentBaby.birthDate}}">生日: {{currentBaby.birthDate}}</text>
       </view>
+      <text class="arrow">›</text>
+    </view>
+    <view class="baby-tip">点击管理宝宝</view>
+  </view>
+
+  <!-- 家庭管理卡片 -->
+  <view class="card family-card" wx:if="{{familyInfo}}">
+    <view class="card-header">
+      <text class="section-title">家庭管理</text>
     </view>
     
-    <!-- 宝宝信息表单 -->
-    <view class="info-form">
-      <view class="form-row">
-        <text class="form-label">宝宝姓名</text>
-        <input 
-          class="form-input"
-          value="{{babyName}}"
-          bindinput="inputName"
-          placeholder="请输入宝宝姓名"
-          maxlength="20"
-        />
+    <view class="family-info">
+      <view class="invite-code-section">
+        <text class="invite-label">邀请码</text>
+        <text class="invite-code">{{familyInfo.inviteCode}}</text>
       </view>
-      
-      <view class="form-row">
-        <text class="form-label">出生日期</text>
-        <picker mode="date" value="{{birthDate}}" bindchange="bindDateChange">
-          <view class="picker-value">
-            <text>{{birthDate || '请选择'}}</text>
-            <text class="arrow">›</text>
-          </view>
-        </picker>
-      </view>
-      
-      <view class="form-row">
-        <text class="form-label">性别</text>
-        <view class="gender-select">
-          <view 
-            class="gender-item {{gender === 'boy' ? 'active' : ''}}"
-            bindtap="selectGender"
-            data-gender="boy"
-          >
-            <text>👦</text>
-            <text class="gender-text">男宝</text>
-          </view>
-          <view 
-            class="gender-item {{gender === 'girl' ? 'active' : ''}}"
-            bindtap="selectGender"
-            data-gender="girl"
-          >
-            <text>👧</text>
-            <text class="gender-text">女宝</text>
-          </view>
-          <view 
-            class="gender-item {{gender === 'unknown' ? 'active' : ''}}"
-            bindtap="selectGender"
-            data-gender="unknown"
-          >
-            <text>🤔</text>
-            <text class="gender-text">未知</text>
-          </view>
-        </view>
-      </view>
+      <text class="invite-hint">分享给家人加入</text>
     </view>
-    
-    <!-- 保存按钮 -->
-    <button class="save-btn" bindtap="saveBabyInfo">
-      <text>💾</text>
-      <text>保存信息</text>
-    </button>
+
+    <view class="menu-item" bindtap="goToFamilySettings">
+      <view class="menu-left">
+        <text class="menu-icon">👨‍👩‍👧</text>
+        <text class="menu-text">家庭设置</text>
+      </view>
+      <text class="arrow">›</text>
+    </view>
   </view>
 
   <!-- 统计卡片 -->
@@ -117,10 +92,10 @@
     
     <view class="menu-divider"></view>
     
-    <view class="menu-item danger" bindtap="clearAllData">
+    <view class="menu-item danger" bindtap="onLogout">
       <view class="menu-left">
-        <text class="menu-icon">🗑️</text>
-        <text class="menu-text">清除所有数据</text>
+        <text class="menu-icon">🚪</text>
+        <text class="menu-text">退出登录</text>
       </view>
       <text class="arrow">›</text>
     </view>

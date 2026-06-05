@@ -4,7 +4,10 @@ const app = getApp()
 
 Page({
   data: {
-    babyName: '小宝宝',
+    babyName: '请添加宝宝',
+    currentBaby: null,
+    babies: [],
+    showBabyPicker: false,
     todayStats: {
       feedCount: 0,
       diaperCount: 0,
@@ -21,14 +24,12 @@ Page({
   },
 
   onLoad: function() {
-    // 加载宝宝信息
-    const babyInfo = app.globalData.babyInfo
-    if (babyInfo && babyInfo.name) {
-      this.setData({ babyName: babyInfo.name })
-    }
+    // 检查登录状态
+    this.checkLogin()
   },
 
   onShow: function() {
+    // 每次显示时刷新数据
     this.loadData()
   },
 
@@ -37,22 +38,99 @@ Page({
     wx.stopPullDownRefresh()
   },
 
+  // 检查登录状态
+  checkLogin: function() {
+    const isLoggedIn = app.globalData.isLoggedIn
+    const hasFamily = !!app.globalData.familyInfo
+
+    if (!isLoggedIn) {
+      // 未登录，跳转到登录页
+      wx.redirectTo({
+        url: '/pages/login/login'
+      })
+      return
+    }
+
+    if (isLoggedIn && !hasFamily) {
+      // 已登录但没有家庭
+      wx.redirectTo({
+        url: '/pages/family/family'
+      })
+      return
+    }
+  },
+
   // 加载数据
   loadData: function() {
+    if (!app.globalData.familyInfo) return
+
+    const familyInfo = app.globalData.familyInfo
+    const currentBaby = app.globalData.currentBaby
+
+    this.setData({
+      babyName: currentBaby ? currentBaby.name : '请添加宝宝',
+      currentBaby: currentBaby,
+      babies: familyInfo.babies || []
+    })
+
+    // 如果没有宝宝，提示添加
+    if (!currentBaby || familyInfo.babies.length === 0) {
+      wx.showModal({
+        title: '提示',
+        content: '请先添加宝宝',
+        showCancel: false,
+        success: () => {
+          wx.navigateTo({
+            url: '/pages/babies/babies'
+          })
+        }
+      })
+      return
+    }
+
     // 获取今日统计
-    const stats = app.getTodayStats()
-    this.setData({ todayStats: stats })
+    app.getTodayStats().then(stats => {
+      this.setData({ todayStats: stats })
+    }).catch(err => {
+      console.error('获取统计失败', err)
+    })
 
     // 获取最近记录
-    const records = wx.getStorageSync('localRecords') || []
-    const recentRecords = records.slice(0, 5).map(r => ({
-      ...r,
-      icon: util.getRecordTypeIcon(r.type),
-      typeName: util.getRecordTypeName(r.type),
-      relativeTime: util.getRelativeTime(r.createdAt),
-      color: util.getRecordTypeColor(r.type)
-    }))
-    this.setData({ recentRecords })
+    app.getRecords({ limit: 5 }).then(records => {
+      const recentRecords = records.map(r => ({
+        ...r,
+        icon: util.getRecordTypeIcon(r.type),
+        typeName: util.getRecordTypeName(r.type),
+        relativeTime: util.getRelativeTime(r._createTime),
+        color: util.getRecordTypeColor(r.type),
+        detail: this.getRecordDetail(r)
+      }))
+      this.setData({ recentRecords })
+    }).catch(err => {
+      console.error('获取记录失败', err)
+    })
+  },
+
+  // 显示宝宝选择器
+  showBabyPicker: function() {
+    this.setData({ showBabyPicker: true })
+  },
+
+  // 隐藏宝宝选择器
+  hideBabyPicker: function() {
+    this.setData({ showBabyPicker: false })
+  },
+
+  // 选择宝宝
+  onSelectBaby: function(e) {
+    const babyId = e.currentTarget.dataset.id
+    app.switchBaby(babyId)
+    this.setData({ showBabyPicker: false })
+    this.loadData()
+    wx.showToast({
+      title: '已切换',
+      icon: 'success'
+    })
   },
 
   // 显示快捷操作弹窗
@@ -103,31 +181,6 @@ Page({
     })
   },
 
-  // 长按删除记录
-  onLongPressRecord: function(e) {
-    const recordId = e.currentTarget.dataset.id
-    const that = this
-    
-    wx.showModal({
-      title: '确认删除',
-      content: '确定要删除这条记录吗？',
-      confirmColor: '#FF6B8A',
-      success: function(res) {
-        if (res.confirm) {
-          app.deleteRecord(recordId, function(result) {
-            if (result.success) {
-              that.loadData()
-              wx.showToast({
-                title: '已删除',
-                icon: 'success'
-              })
-            }
-          })
-        }
-      }
-    })
-  },
-
   // 点击记录跳转到编辑页面
   onTapRecord: function(e) {
     const recordId = e.currentTarget.dataset.id
@@ -147,29 +200,31 @@ Page({
 
   // 获取记录详情文本
   getRecordDetail: function(record) {
+    const data = record.data || record
     switch (record.type) {
       case 'feed':
-        if (record.method === 'bottle') {
-          return `奶瓶 ${record.amount}ml`
+        if (data.method === 'bottle') {
+          return `奶瓶 ${data.amount}ml`
         } else {
-          return `母乳 ${record.method === 'left' ? '左侧' : record.method === 'right' ? '右侧' : '双侧'}`
+          const sides = { 'breast-left': '左侧', 'breast-right': '右侧', 'breast-both': '双侧' }
+          return `母乳 ${sides[data.method] || ''}`
         }
       case 'diaper':
         const types = []
-        if (record.wet) types.push('湿')
-        if (record.dirty) types.push('脏')
+        if (data.wet) types.push('湿')
+        if (data.dirty) types.push('脏')
         return types.join('+') || '换尿布'
       case 'sleep':
-        if (record.wakeTime) {
-          const duration = util.calculateDuration(record.sleepTime, record.wakeTime)
+        if (data.wakeTime) {
+          const duration = util.calculateDuration(data.sleepTime, data.wakeTime)
           return `睡眠 ${util.formatDuration(duration)}`
         }
         return '入睡中'
       case 'growth':
         const items = []
-        if (record.weight) items.push(`体重${record.weight}kg`)
-        if (record.height) items.push(`身高${record.height}cm`)
-        if (record.headCircumference) items.push(`头围${record.headCircumference}cm`)
+        if (data.weight) items.push(`体重${data.weight}kg`)
+        if (data.height) items.push(`身高${data.height}cm`)
+        if (data.headCircumference) items.push(`头围${data.headCircumference}cm`)
         return items.join(' | ') || '成长记录'
       default:
         return ''

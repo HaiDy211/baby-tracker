@@ -22,39 +22,73 @@
   display: block;
 }
 
+/* 用户信息卡片 */
+.user-card {
+  background: linear-gradient(135deg, #FFE4E9 0%, #FFF0F3 100%);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  border: 4rpx solid #FFFFFF;
+  box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.1);
+}
+
+.user-detail {
+  margin-left: 25rpx;
+}
+
+.user-name {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #333333;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.family-name {
+  font-size: 26rpx;
+  color: #FF6B8A;
+  background-color: rgba(255, 107, 138, 0.1);
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+}
+
 /* 宝宝信息卡片 */
 .baby-card {
   background: linear-gradient(135deg, #FFFFFF 0%, #FFF8FA 100%);
+  padding: 25rpx 30rpx;
 }
 
-/* 头像区域 */
-.avatar-section {
+.baby-info {
   display: flex;
   align-items: center;
-  margin-bottom: 30rpx;
 }
 
-.avatar-wrapper {
-  width: 120rpx;
-  height: 120rpx;
+.baby-avatar {
+  width: 100rpx;
+  height: 100rpx;
   border-radius: 50%;
   background: linear-gradient(135deg, #FFE4E9 0%, #FFF0F3 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8rpx 25rpx rgba(255, 182, 193, 0.3);
+  font-size: 50rpx;
 }
 
-.avatar-icon {
-  font-size: 70rpx;
-}
-
-.avatar-info {
+.baby-detail {
   margin-left: 25rpx;
+  flex: 1;
 }
 
 .baby-name {
-  font-size: 36rpx;
+  font-size: 34rpx;
   font-weight: 600;
   color: #333333;
   display: block;
@@ -63,114 +97,58 @@
 
 .baby-age {
   font-size: 26rpx;
-  color: #FFB6C1;
-  background-color: #FFF0F3;
-  padding: 6rpx 20rpx;
-  border-radius: 20rpx;
+  color: #999999;
 }
 
-/* 表单 */
-.info-form {
-  background-color: #FFF8FA;
-  border-radius: 16rpx;
-  padding: 10rpx 0;
-  margin-bottom: 25rpx;
-}
-
-.form-row {
-  display: flex;
-  align-items: center;
-  padding: 25rpx 20rpx;
-  border-bottom: 1rpx solid #FFE4E9;
-}
-
-.form-row:last-child {
-  border-bottom: none;
-}
-
-.form-label {
-  font-size: 28rpx;
-  color: #666666;
-  width: 140rpx;
-  flex-shrink: 0;
-}
-
-.form-input {
-  flex: 1;
-  font-size: 28rpx;
-  color: #333333;
-  text-align: right;
-}
-
-.picker-value {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  font-size: 28rpx;
-  color: #333333;
-}
-
-.arrow {
-  font-size: 32rpx;
-  color: #CCCCCC;
-  margin-left: 10rpx;
-}
-
-/* 性别选择 */
-.gender-select {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-  gap: 15rpx;
-}
-
-.gender-item {
-  display: flex;
-  align-items: center;
-  padding: 12rpx 20rpx;
-  border-radius: 30rpx;
-  background-color: #FFFFFF;
-  border: 2rpx solid #F0F0F0;
-}
-
-.gender-item.active {
-  background: linear-gradient(135deg, #FFE4E9 0%, #FFF0F3 100%);
-  border-color: #FFB6C1;
-}
-
-.gender-item text:first-child {
-  font-size: 28rpx;
-  margin-right: 8rpx;
-}
-
-.gender-text {
+.baby-tip {
   font-size: 24rpx;
-  color: #666666;
+  color: #FFB6C1;
+  text-align: center;
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx dashed #FFE4E9;
 }
 
-.gender-item.active .gender-text {
-  color: #FF6B8A;
+/* 家庭管理卡片 */
+.family-card {
+  background: linear-gradient(135deg, #FFF8E6 0%, #FFFDF5 100%);
 }
 
-/* 保存按钮 */
-.save-btn {
+.card-header {
+  margin-bottom: 20rpx;
+}
+
+.family-info {
+  background-color: #FFF;
+  border-radius: 16rpx;
+  padding: 25rpx;
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.invite-code-section {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 25rpx;
-  background: linear-gradient(135deg, #FFB6C1 0%, #FFC0CB 100%);
-  border-radius: 50rpx;
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #FFFFFF;
-  border: none;
-  box-shadow: 0 8rpx 25rpx rgba(255, 182, 193, 0.4);
+  margin-bottom: 10rpx;
 }
 
-.save-btn text:first-child {
-  font-size: 36rpx;
-  margin-right: 10rpx;
+.invite-label {
+  font-size: 28rpx;
+  color: #666666;
+  margin-right: 15rpx;
+}
+
+.invite-code {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #FF6B8A;
+  letter-spacing: 8rpx;
+}
+
+.invite-hint {
+  font-size: 24rpx;
+  color: #999999;
 }
 
 /* 统计卡片 */
@@ -248,14 +226,21 @@
   margin: 0 30rpx;
 }
 
+.arrow {
+  font-size: 32rpx;
+  color: #CCCCCC;
+  margin-left: 10rpx;
+}
+
 /* 版本信息 */
 .version-info {
   text-align: center;
-  padding: 40rpx;
   font-size: 24rpx;
   color: #CCCCCC;
+  margin-top: 30rpx;
+  padding-bottom: 30rpx;
 }
 
 .bottom-space {
-  height: 50rpx;
+  height: 150rpx;
 }

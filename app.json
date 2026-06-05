@@ -1,12 +1,17 @@
 {
   "pages": [
+    "pages/login/login",
     "pages/index/index",
     "pages/feed/feed",
     "pages/diaper/diaper",
     "pages/sleep/sleep",
     "pages/growth/growth",
     "pages/timeline/timeline",
-    "pages/my/my"
+    "pages/my/my",
+    "pages/family/family",
+    "pages/family-settings/family-settings",
+    "pages/babies/babies",
+    "pages/baby-edit/baby-edit"
   ],
   "window": {
     "backgroundTextStyle": "light",

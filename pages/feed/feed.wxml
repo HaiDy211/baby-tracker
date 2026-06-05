@@ -1,102 +1,130 @@
 <view class="container">
-  <!-- 喂奶方式选择 -->
-  <view class="card method-card">
-    <text class="section-title">喂奶方式</text>
-    <view class="method-grid">
-      <view 
-        wx:for="{{methodOptions}}" 
-        wx:key="value"
-        class="method-item {{feedMethod === item.value ? 'active' : ''}}"
-        bindtap="selectMethod"
-        data-method="{{item.value}}"
-      >
-        <text class="method-icon">{{item.icon}}</text>
-        <text class="method-label">{{item.label}}</text>
-      </view>
-    </view>
-  </view>
+  <wxs module="util" src="../../utils/util.wxs"></wxs>
 
-  <!-- 奶瓶容量输入（仅奶瓶模式显示） -->
-  <view class="card bottle-card" wx:if="{{feedMethod === 'bottle'}}">
-    <text class="section-title">喂奶量</text>
-    <view class="bottle-input">
-      <view class="amount-control">
-        <view class="control-btn" bindtap="reduceAmount">
-          <text>-</text>
-        </view>
-        <input 
-          type="number" 
-          class="amount-input" 
-          value="{{bottleAmount}}"
-          bindinput="inputAmount"
-          placeholder="请输入"
-        />
-        <view class="control-btn" bindtap="addAmount">
-          <text>+</text>
-        </view>
-      </view>
-      <text class="unit">ml</text>
+  <!-- 记录表单 -->
+  <view class="card form-card">
+    <view class="form-header">
+      <text class="form-title">{{isEditing ? '编辑记录' : '记录喂奶'}}</text>
     </view>
-    <view class="quick-amounts">
-      <view class="quick-item" bindtap="addAmount" data-value="60">60ml</view>
-      <view class="quick-item" bindtap="addAmount" data-value="90">90ml</view>
-      <view class="quick-item" bindtap="addAmount" data-value="120">120ml</view>
-      <view class="quick-item" bindtap="addAmount" data-value="150">150ml</view>
-    </view>
-  </view>
 
-  <!-- 记录时间 -->
-  <view class="card time-card">
-    <text class="section-title">记录时间</text>
-    <view class="time-input">
-      <picker mode="date" value="{{recordDate}}" bindchange="bindDateChange">
+    <!-- 宝宝选择 -->
+    <view class="form-row">
+      <text class="form-label">宝宝</text>
+      <picker mode="selector" range="{{babyList}}" range-key="name" bindchange="bindBabyChange">
         <view class="picker-value">
-          <text>{{recordDate}}</text>
+          <text>{{selectedBabyName || '请选择宝宝'}}</text>
           <text class="arrow">›</text>
         </view>
       </picker>
+    </view>
+
+    <!-- 记录时间 -->
+    <view class="form-row">
+      <text class="form-label">时间</text>
       <picker mode="time" value="{{recordTime}}" bindchange="bindTimeChange">
         <view class="picker-value">
-          <text>{{recordTime}}</text>
+          <text>{{recordTime || '请选择'}}</text>
           <text class="arrow">›</text>
         </view>
       </picker>
     </view>
+
+    <!-- 喂奶方式 -->
+    <view class="form-row">
+      <text class="form-label">方式</text>
+      <view class="method-select">
+        <view 
+          class="method-item {{formData.method === 'breast' ? 'active' : ''}}"
+          bindtap="selectMethod" data-method="breast">
+          <text>🤱</text>
+          <text class="method-text">亲喂</text>
+        </view>
+        <view 
+          class="method-item {{formData.method === 'bottle' ? 'active' : ''}}"
+          bindtap="selectMethod" data-method="bottle">
+          <text>🍼</text>
+          <text class="method-text">瓶喂</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 亲喂时长 -->
+    <view class="form-row" wx:if="{{formData.method === 'breast'}}">
+      <text class="form-label">时长</text>
+      <view class="input-group">
+        <input 
+          type="number"
+          class="form-input"
+          value="{{formData.duration}}"
+          bindinput="inputDuration"
+          placeholder="0"
+        />
+        <text class="input-suffix">分钟</text>
+      </view>
+    </view>
+
+    <!-- 瓶喂奶量 -->
+    <view class="form-row" wx:if="{{formData.method === 'bottle'}}">
+      <text class="form-label">奶量</text>
+      <view class="input-group">
+        <input 
+          type="number"
+          class="form-input"
+          value="{{formData.amount}}"
+          bindinput="inputAmount"
+          placeholder="0"
+        />
+        <text class="input-suffix">ml</text>
+      </view>
+    </view>
+
+    <!-- 备注 -->
+    <view class="form-row">
+      <text class="form-label">备注</text>
+      <input 
+        class="form-input"
+        value="{{formData.notes}}"
+        bindinput="inputNotes"
+        placeholder="选填"
+      />
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="form-actions" wx:if="{{isEditing}}">
+      <button class="btn cancel-btn" bindtap="onCancel">取消</button>
+      <button class="btn delete-btn" bindtap="onDelete">删除</button>
+      <button class="btn save-btn" bindtap="saveRecord">保存</button>
+    </view>
+    <button class="btn primary-btn" bindtap="saveRecord" wx:else>💾 保存记录</button>
   </view>
 
-  <!-- 备注 -->
-  <view class="card note-card">
-    <text class="section-title">备注（选填）</text>
-    <textarea 
-      class="note-input"
-      placeholder="可以添加一些备注，如宝宝的状态..."
-      value="{{note}}"
-      bindinput="inputNote"
-      maxlength="200"
-    />
+  <!-- 今日记录列表 -->
+  <view class="card records-card">
+    <text class="section-title">今日记录</text>
+    <view class="records-list" wx:if="{{todayRecords.length > 0}}">
+      <view 
+        class="record-item" 
+        wx:for="{{todayRecords}}" 
+        wx:key="_id"
+        bindtap="onTapRecord"
+        data-record="{{item}}"
+      >
+        <view class="record-time">
+          <text class="time">{{util.formatTime(item.createdAt)}}</text>
+          <text class="record-user">{{item.userTitle}}</text>
+        </view>
+        <view class="record-content">
+          <text class="record-method">{{item.data.method === 'breast' ? '亲喂' : '瓶喂'}}</text>
+          <text class="record-detail" wx:if="{{item.data.duration}}">{{item.data.duration}}分钟</text>
+          <text class="record-detail" wx:if="{{item.data.amount}}">{{item.data.amount}}ml</text>
+          <text class="record-notes" wx:if="{{item.data.notes}}">{{item.data.notes}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="empty-tip" wx:else>
+      <text>暂无今日记录</text>
+    </view>
   </view>
 
-  <!-- 提交按钮 -->
-  <view class="submit-btn-wrapper" wx:if="{{!isEditing}}">
-    <button class="submit-btn" bindtap="submitRecord">
-      <text>💾</text>
-      <text>保存记录</text>
-    </button>
-  </view>
-
-  <!-- 编辑模式按钮 -->
-  <view class="edit-btn-wrapper" wx:if="{{isEditing}}">
-    <button class="cancel-btn" bindtap="cancelEdit">
-      <text>取消</text>
-    </button>
-    <button class="delete-btn" bindtap="deleteEditingRecord">
-      <text>🗑️ 删除</text>
-    </button>
-    <button class="save-btn" bindtap="submitRecord">
-      <text>💾 保存</text>
-    </button>
-  </view>
-
- 
   <view class="bottom-space"></view>
 </view>

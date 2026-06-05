@@ -1,0 +1,87 @@
+<view class="container">
+  <!-- 模式切换 -->
+  <view class="mode-tabs">
+    <view 
+      class="tab {{mode === 'create' ? 'active' : ''}}" 
+      bindtap="switchMode" 
+      data-mode="create"
+    >
+      创建家庭
+    </view>
+    <view 
+      class="tab {{mode === 'join' ? 'active' : ''}}" 
+      bindtap="switchMode" 
+      data-mode="join"
+    >
+      加入家庭
+    </view>
+  </view>
+
+  <!-- 创建家庭 -->
+  <view class="form-section" wx:if="{{mode === 'create'}}">
+    <view class="form-item">
+      <text class="label">家庭名称</text>
+      <input 
+        class="input" 
+        placeholder="例如：张明家、小明家"
+        value="{{familyName}}"
+        bindinput="onFamilyNameInput"
+        maxlength="20"
+      />
+    </view>
+
+    <view class="tips">
+      <text>创建家庭后，您将自动成为家庭管理员</text>
+      <text>可以将邀请码分享给家人，让他们加入</text>
+    </view>
+
+    <button 
+      class="btn btn-primary" 
+      bindtap="onCreateFamily"
+      loading="{{isLoading}}"
+    >
+      创建家庭
+    </button>
+  </view>
+
+  <!-- 加入家庭 -->
+  <view class="form-section" wx:if="{{mode === 'join'}}">
+    <view class="form-item">
+      <text class="label">邀请码</text>
+      <input 
+        class="input code-input" 
+        placeholder="请输入6位邀请码"
+        value="{{inviteCode}}"
+        bindinput="onInviteCodeInput"
+        maxlength="6"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">您的称呼</text>
+      <picker 
+        mode="selector" 
+        range="{{titleOptions}}" 
+        range-key="label"
+        bindchange="onTitleChange"
+      >
+        <view class="picker">
+          {{selectedTitle}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="tips">
+      <text>向家庭管理员获取邀请码</text>
+      <text>选择您在家庭中的称呼</text>
+    </view>
+
+    <button 
+      class="btn btn-primary" 
+      bindtap="onJoinFamily"
+      loading="{{isLoading}}"
+    >
+      加入家庭
+    </button>
+  </view>
+</view>

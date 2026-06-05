@@ -1,0 +1,42 @@
+<view class="container">
+  <!-- 宝宝列表 -->
+  <view class="baby-list" wx:if="{{babies.length > 0}}">
+    <view 
+      class="baby-item {{currentBaby && currentBaby.babyId === item.babyId ? 'active' : ''}}"
+      wx:for="{{babies}}"
+      wx:key="babyId"
+    >
+      <view class="baby-info" bindtap="onSelectBaby" data-id="{{item.babyId}}">
+        <image class="baby-avatar" src="{{item.avatar || '/images/baby-default.png'}}" mode="aspectFill"></image>
+        <view class="baby-detail">
+          <view class="baby-name">{{item.name}}</view>
+          <view class="baby-birth">{{item.birthDate || '未设置生日'}}</view>
+        </view>
+        <view class="baby-gender">
+          <image wx:if="{{item.gender === 'boy'}}" src="/images/boy.png" mode="aspectFit"></image>
+          <image wx:if="{{item.gender === 'girl'}}" src="/images/girl.png" mode="aspectFit"></image>
+        </view>
+        <view class="is-default" wx:if="{{item.isDefault}}">默认</view>
+      </view>
+      
+      <view class="baby-actions">
+        <text class="action-btn" bindtap="onEditBaby" data-id="{{item.babyId}}">编辑</text>
+        <text class="action-btn delete" bindtap="onDeleteBaby" data-baby="{{item}}">删除</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{babies.length === 0 && !isFirst}}">
+    <image class="empty-icon" src="/images/empty-baby.png" mode="aspectFit"></image>
+    <text class="empty-text">还没有添加宝宝</text>
+  </view>
+
+  <!-- 添加按钮 -->
+  <view class="bottom-actions">
+    <button class="btn btn-add" bindtap="onAddBaby">添加宝宝</button>
+    <button class="btn btn-primary" wx:if="{{isFirst && babies.length > 0}}" bindtap="onComplete">
+      完成
+    </button>
+  </view>
+</view>

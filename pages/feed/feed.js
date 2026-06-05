@@ -15,14 +15,16 @@ Page({
     note: '',
     // 喂养方式选项
     methodOptions: [
-      { value: 'breast-left', label: '左侧母乳', icon: '🤱' },
-      { value: 'breast-right', label: '右侧母乳', icon: '🤱' },
-      { value: 'breast-both', label: '双侧母乳', icon: '🤱' },
-      { value: 'bottle', label: '奶瓶喂养', icon: '🍼' }
+      { value: 'breast-left', label: '左侧母乳' },
+      { value: 'breast-right', label: '右侧母乳' },
+      { value: 'breast-both', label: '双侧母乳' },
+      { value: 'bottle', label: '奶瓶喂养' }
     ],
     // 编辑状态
     isEditing: false,
-    editingRecordId: ''
+    editingRecordId: '',
+    // 记录列表
+    recentRecords: []
   },
 
   onLoad: function(options) {
@@ -34,6 +36,9 @@ Page({
     }
   },
 
+  onShow: function() {
+    this.loadRecentRecords()
+  },
 
   // 初始化时间
   initTime: function() {
@@ -46,50 +51,58 @@ Page({
 
   // 加载最近记录
   loadRecentRecords: function() {
-    const records = wx.getStorageSync('localRecords') || []
-    const feedRecords = records
-      .filter(r => r.type === 'feed')
-      .slice(0, 5)
-      .map(r => ({
+    if (!app.globalData.familyInfo) return
+
+    app.getRecords({ type: 'feed', limit: 10 }).then(records => {
+      const feedRecords = records.map(r => ({
         ...r,
         icon: util.getRecordTypeIcon(r.type),
-        relativeTime: util.getRelativeTime(r.createdAt),
-        detail: this.getRecordDetail(r)
+        relativeTime: util.getRelativeTime(r._createTime),
+        detail: this.getRecordDetail(r),
+        createdDate: util.formatDate(new Date(r._createTime))
       }))
-    this.setData({ recentRecords: feedRecords })
+      this.setData({ recentRecords: feedRecords })
+    }).catch(err => {
+      console.error('加载记录失败', err)
+    })
   },
 
   // 加载记录用于编辑
   loadRecordForEdit: function(recordId) {
-    const records = wx.getStorageSync('localRecords') || []
-    const record = records.find(r => r.id === recordId)
-    if (!record || record.type !== 'feed') return
+    app.getRecords({ type: 'feed', limit: 100 }).then(records => {
+      const record = records.find(r => r._id === recordId)
+      if (!record) return
 
-    const dateTime = record.createdAt.split(' ')
-    const date = dateTime[0]
-    const time = dateTime[1] ? dateTime[1].substring(0, 5) : '00:00'
+      const dateTime = record._createTime ? new Date(record._createTime) : new Date()
+      const date = util.formatDate(dateTime)
+      const time = util.formatTimeShort(dateTime)
 
-    this.setData({
-      isEditing: true,
-      editingRecordId: recordId,
-      feedMethod: record.method || 'breast-left',
-      bottleAmount: record.amount || 120,
-      recordDate: date,
-      recordTime: time,
-      note: record.note || ''
+      this.setData({
+        isEditing: true,
+        editingRecordId: recordId,
+        feedMethod: record.data ? record.data.method : record.method || 'breast-left',
+        bottleAmount: record.data ? record.data.amount : record.amount || 120,
+        recordDate: date,
+        recordTime: time,
+        note: record.data ? record.data.note : record.note || ''
+      })
+    }).catch(err => {
+      console.error('加载记录失败', err)
     })
   },
+
   // 获取记录详情
   getRecordDetail: function(record) {
-    if (record.method === 'bottle') {
-      return `${record.amount || 0}ml`
+    const data = record.data || record
+    if (data.method === 'bottle') {
+      return `${data.amount || 0}ml`
     } else {
       const sides = {
         'breast-left': '左侧',
         'breast-right': '右侧',
         'breast-both': '双侧'
       }
-      return sides[record.method] || '母乳'
+      return sides[data.method] || '母乳'
     }
   },
 
@@ -146,16 +159,34 @@ Page({
       return
     }
 
+    // 检查是否已登录且有家庭
+    if (!app.globalData.familyInfo) {
+      wx.showToast({
+        title: '请先加入家庭',
+        icon: 'none'
+      })
+      return
+    }
+
+    if (!app.globalData.currentBaby) {
+      wx.showToast({
+        title: '请先添加宝宝',
+        icon: 'none'
+      })
+      return
+    }
+
     const record = {
       type: 'feed',
-      method: feedMethod,
-      sleepTime: `${recordDate} ${recordTime}:00`,
       createdAt: `${recordDate} ${recordTime}:00`,
-      note: note
+      data: {
+        method: feedMethod,
+        note: note
+      }
     }
 
     if (feedMethod === 'bottle') {
-      record.amount = parseInt(bottleAmount)
+      record.data.amount = parseInt(bottleAmount)
     }
 
     const saveCallback = (result) => {
@@ -165,15 +196,20 @@ Page({
           icon: 'success'
         })
         
-        // 延迟返回，让用户看到成功提示
+        // 延迟返回
         setTimeout(() => {
           wx.navigateBack({
             delta: 1,
             fail: function() {
-              isEditing ? wx.switchTab({ url: '/pages/index/index' }) : wx.switchTab({ url: '/pages/timeline/timeline' })
+              wx.switchTab({ url: '/pages/timeline/timeline' })
             }
           })
         }, 1000)
+      } else {
+        wx.showToast({
+          title: result.error || '保存失败',
+          icon: 'none'
+        })
       }
     }
 
@@ -185,25 +221,21 @@ Page({
     }
   },
 
- 
   // 删除当前编辑的记录
   deleteEditingRecord: function() {
     if (!this.data.editingRecordId) return
     
-    const that = this
     wx.showModal({
       title: '确认删除',
       content: '确定要删除这条记录吗？',
-      confirmColor: '#FF6B8A',
-      success: function(res) {
+      success: res => {
         if (res.confirm) {
-          app.deleteRecord(that.data.editingRecordId, function(result) {
+          app.deleteRecord(this.data.editingRecordId, result => {
             if (result.success) {
               wx.showToast({
                 title: '已删除',
                 icon: 'success'
               })
-              // 延迟返回，让用户看到成功提示
               setTimeout(() => {
                 wx.navigateBack({
                   delta: 1,
@@ -212,7 +244,7 @@ Page({
                   }
                 })
               }, 1000)
-           }
+            }
           })
         }
       }

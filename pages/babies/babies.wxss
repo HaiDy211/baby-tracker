@@ -1,0 +1,146 @@
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 30rpx;
+  padding-bottom: 200rpx;
+}
+
+.baby-list {
+  margin-bottom: 30rpx;
+}
+
+.baby-item {
+  background-color: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  overflow: hidden;
+}
+
+.baby-item.active {
+  border: 4rpx solid #FFB6C1;
+}
+
+.baby-info {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+}
+
+.baby-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+}
+
+.baby-detail {
+  flex: 1;
+  margin-left: 24rpx;
+}
+
+.baby-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.baby-birth {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+.baby-gender {
+  width: 40rpx;
+  height: 40rpx;
+  margin-left: 20rpx;
+}
+
+.baby-gender image {
+  width: 100%;
+  height: 100%;
+}
+
+.is-default {
+  font-size: 22rpx;
+  color: #FFB6C1;
+  background-color: #fff5f5;
+  padding: 6rpx 16rpx;
+  border-radius: 16rpx;
+  margin-left: 20rpx;
+}
+
+.baby-actions {
+  display: flex;
+  border-top: 1rpx solid #f5f5f5;
+}
+
+.action-btn {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: #666;
+}
+
+.action-btn:first-child {
+  border-right: 1rpx solid #f5f5f5;
+}
+
+.action-btn.delete {
+  color: #ff4d4f;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 100rpx;
+}
+
+.empty-icon {
+  width: 200rpx;
+  height: 200rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999;
+  margin-top: 30rpx;
+}
+
+.bottom-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 30rpx;
+  background-color: #fff;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05);
+  display: flex;
+  gap: 20rpx;
+}
+
+.btn {
+  flex: 1;
+  height: 96rpx;
+  line-height: 96rpx;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.btn-add {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.btn-primary {
+  background-color: #FFB6C1;
+  color: #fff;
+}
+
+.btn-primary::after {
+  border: none;
+}

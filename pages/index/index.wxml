@@ -1,9 +1,9 @@
 <view class="container">
   <!-- 顶部问候 -->
   <view class="header">
-    <view class="greeting">
-      <text class="greeting-text">你好，</text>
-      <text class="baby-name">{{babyName}}</text>
+    <view class="greeting" bindtap="showBabyPicker">
+      <text class="greeting-text">{{babyName}}</text>
+      <text class="switch-btn" wx:if="{{babies.length > 1}}">切换</text>
     </view>
     <text class="date">{{util.getDate()}}</text>
   </view>
@@ -91,11 +91,10 @@
     <view wx:if="{{recentRecords.length > 0}}" class="recent-list">
       <view 
         wx:for="{{recentRecords}}" 
-        wx:key="id" 
+        wx:key="_id" 
         class="recent-item"
         bindtap="onTapRecord"
-        bindlongpress="onLongPressRecord"
-        data-id="{{item.id}}"
+        data-id="{{item._id}}"
         data-type="{{item.type}}"
       >
         <view class="recent-icon" style="background-color: {{item.color}}20;">
@@ -106,7 +105,8 @@
             <text class="recent-type">{{item.typeName}}</text>
             <text class="recent-time">{{item.relativeTime}}</text>
           </view>
-          <text class="recent-detail">{{getRecordDetail(item)}}</text>
+          <text class="recent-detail">{{item.detail}}</text>
+          <text class="recent-recorder">{{item.userTitle}}</text>
         </view>
       </view>
     </view>
@@ -120,6 +120,31 @@
 
   <!-- 底部留白 -->
   <view class="bottom-space"></view>
+</view>
+
+<!-- 宝宝选择弹窗 -->
+<view class="picker-mask" wx:if="{{showBabyPicker}}" bindtap="hideBabyPicker">
+  <view class="picker-content" catchtap="stopPropagation">
+    <view class="picker-header">
+      <text class="picker-title">选择宝宝</text>
+    </view>
+    <view class="picker-list">
+      <view 
+        wx:for="{{babies}}" 
+        wx:key="babyId"
+        class="picker-item {{currentBaby && currentBaby.babyId === item.babyId ? 'active' : ''}}"
+        bindtap="onSelectBaby"
+        data-id="{{item.babyId}}"
+      >
+        <image class="picker-avatar" src="{{item.avatar || '/images/baby-default.png'}}" mode="aspectFill"></image>
+        <text class="picker-name">{{item.name}}</text>
+        <text class="picker-check" wx:if="{{currentBaby && currentBaby.babyId === item.babyId}}">✓</text>
+      </view>
+    </view>
+    <view class="picker-footer">
+      <button class="picker-cancel" bindtap="hideBabyPicker">取消</button>
+    </view>
+  </view>
 </view>
 
 <!-- WXS工具模块 -->

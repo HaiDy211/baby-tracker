@@ -1,0 +1,75 @@
+<view class="container">
+  <view class="form-section">
+    <!-- 头像 -->
+    <view class="avatar-section">
+      <view class="avatar-wrapper" bindtap="onChooseAvatar">
+        <image 
+          class="avatar" 
+          src="{{avatar || '/images/baby-default.png'}}" 
+          mode="aspectFill"
+        ></image>
+        <view class="avatar-tip">点击更换</view>
+      </view>
+    </view>
+
+    <!-- 姓名 -->
+    <view class="form-item">
+      <text class="label">宝宝姓名</text>
+      <input 
+        class="input" 
+        placeholder="请输入宝宝姓名"
+        value="{{name}}"
+        bindinput="onNameInput"
+        maxlength="20"
+      />
+    </view>
+
+    <!-- 出生日期 -->
+    <view class="form-item">
+      <text class="label">出生日期</text>
+      <picker 
+        mode="date" 
+        value="{{birthDate}}"
+        bindchange="onBirthDateChange"
+        start="2000-01-01"
+        end="{{today}}"
+      >
+        <view class="picker">
+          {{birthDate || '请选择出生日期'}}
+        </view>
+      </picker>
+    </view>
+
+    <!-- 性别 -->
+    <view class="form-item">
+      <text class="label">性别</text>
+      <radio-group bindchange="onGenderChange">
+        <label class="radio-item">
+          <radio value="0" checked="{{gender === 'unknown'}}" /> 未知
+        </label>
+        <label class="radio-item">
+          <radio value="1" checked="{{gender === 'boy'}}" /> 男宝宝
+        </label>
+        <label class="radio-item">
+          <radio value="2" checked="{{gender === 'girl'}}" /> 女宝宝
+        </label>
+      </radio-group>
+    </view>
+
+    <!-- 设为默认 -->
+    <view class="form-item checkbox-item" wx:if="{{!isEdit}}">
+      <checkbox-group bindchange="onDefaultChange">
+        <label>
+          <checkbox value="true" /> 设为默认宝宝
+        </label>
+      </checkbox-group>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="bottom-section">
+    <button class="btn btn-primary" bindtap="onSave">
+      {{isEdit ? '保存' : '添加'}}
+    </button>
+  </view>
+</view>

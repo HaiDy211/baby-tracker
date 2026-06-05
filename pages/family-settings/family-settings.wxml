@@ -1,0 +1,57 @@
+<view class="container" wx:if="{{familyInfo}}">
+  <!-- 家庭信息 -->
+  <view class="section">
+    <view class="section-title">家庭信息</view>
+    <view class="info-card">
+      <view class="family-name">{{familyInfo.name}}</view>
+      
+      <view class="invite-section">
+        <view class="invite-label">邀请码</view>
+        <view class="invite-code">{{familyInfo.inviteCode}}</view>
+        <button class="copy-btn" bindtap="onCopyInviteCode">复制</button>
+      </view>
+      
+      <view class="invite-tip">分享给家人，让他们加入家庭</view>
+    </view>
+  </view>
+
+  <!-- 成员列表 -->
+  <view class="section">
+    <view class="section-title">家庭成员</view>
+    <view class="member-list">
+      <view class="member-item" wx:for="{{familyInfo.members}}" wx:key="userId">
+        <image class="member-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="member-info">
+          <text class="member-name">{{item.nickname}}</text>
+          <text class="member-title">{{item.title}}</text>
+        </view>
+        <view class="member-role" wx:if="{{item.role === 'owner'}}">管理员</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 宝宝管理 -->
+  <view class="section">
+    <view class="section-title">宝宝管理</view>
+    <view class="action-item" bindtap="onGoToBabies">
+      <text>管理宝宝 ({{familyInfo.babies.length}})</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+
+  <!-- 我的称呼 -->
+  <view class="section">
+    <view class="section-title">我的设置</view>
+    <view class="action-item" bindtap="onChangeTitle">
+      <text>修改我的称呼</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+
+  <!-- 退出家庭 -->
+  <view class="section">
+    <view class="leave-btn" bindtap="onLeaveFamily">
+      {{isOwner ? '解散家庭' : '退出家庭'}}
+    </view>
+  </view>
+</view>

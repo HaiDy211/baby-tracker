@@ -29,7 +29,6 @@ Page({
     }
     
     this.initTime()
-    this.loadRecentRecords()
 
     if (options.recordId) {
       this.loadRecordForEdit(options.recordId)
@@ -58,55 +57,63 @@ Page({
 
   // 加载最近记录
   loadRecentRecords: function() {
-    const records = wx.getStorageSync('localRecords') || []
-    const sleepRecords = records
-      .filter(r => r.type === 'sleep')
-      .slice(0, 5)
-      .map(r => ({
+    if (!app.globalData.familyInfo) return
+
+    app.getRecords({ type: 'sleep', limit: 10 }).then(records => {
+      const sleepRecords = records.map(r => ({
         ...r,
         icon: util.getRecordTypeIcon(r.type),
-        relativeTime: util.getRelativeTime(r.createdAt),
-        detail: this.getRecordDetail(r)
+        relativeTime: util.getRelativeTime(r._createTime),
+        detail: this.getRecordDetail(r),
+        createdDate: util.formatDate(new Date(r._createTime))
       }))
-    this.setData({ recentRecords: sleepRecords })
+      this.setData({ recentRecords: sleepRecords })
+    }).catch(err => {
+      console.error('加载记录失败', err)
+    })
   },
 
   // 加载记录用于编辑
   loadRecordForEdit: function(recordId) {
-    const records = wx.getStorageSync('localRecords') || []
-    const record = records.find(r => r.id === recordId)
-    if (!record || record.type !== 'sleep') return
+    app.getRecords({ type: 'sleep', limit: 100 }).then(records => {
+      const record = records.find(r => r._id === recordId)
+      if (!record) return
 
-    const sleepDateTime = record.sleepTime ? record.sleepTime.split(' ') : record.createdAt.split(' ')
-    const sleepDate = sleepDateTime[0]
-    const sleepTime = sleepDateTime[1] ? sleepDateTime[1].substring(0, 5) : '00:00'
+      const data = record.data || record
+      const sleepDateTime = data.sleepTime ? new Date(data.sleepTime) : new Date(record._createTime)
+      const sleepDate = util.formatDate(sleepDateTime)
+      const sleepTime = util.formatTimeShort(sleepDateTime)
 
-    let wakeDate = sleepDate, wakeTime = sleepTime, sleepStatus = 'sleeping'
-    
-    if (record.wakeTime) {
-      const wakeDateTime = record.wakeTime.split(' ')
-      wakeDate = wakeDateTime[0]
-      wakeTime = wakeDateTime[1].substring(0, 5)
-      sleepStatus = 'wokeup'
-    }
+      let wakeDate = sleepDate, wakeTime = sleepTime, sleepStatus = 'sleeping'
+      
+      if (data.wakeTime) {
+        const wakeDateTime = new Date(data.wakeTime)
+        wakeDate = util.formatDate(wakeDateTime)
+        wakeTime = util.formatTimeShort(wakeDateTime)
+        sleepStatus = 'wokeup'
+      }
 
-    this.setData({
-      isEditing: true,
-      editingRecordId: recordId,
-      sleepStatus: sleepStatus,
-      sleepDate: sleepDate,
-      sleepTime: sleepTime,
-      wakeDate: wakeDate,
-      wakeTime: wakeTime,
-      note: record.note || ''
+      this.setData({
+        isEditing: true,
+        editingRecordId: recordId,
+        sleepStatus: sleepStatus,
+        sleepDate: sleepDate,
+        sleepTime: sleepTime,
+        wakeDate: wakeDate,
+        wakeTime: wakeTime,
+        note: data.note || ''
+      })
+      this.updateDuration()
+    }).catch(err => {
+      console.error('加载记录失败', err)
     })
-    this.updateDuration()
   },
 
   // 获取记录详情
   getRecordDetail: function(record) {
-    if (record.wakeTime) {
-      const duration = util.calculateDuration(record.sleepTime, record.wakeTime)
+    const data = record.data || record
+    if (data.wakeTime) {
+      const duration = util.calculateDuration(data.sleepTime, data.wakeTime)
       return `睡眠 ${util.formatDuration(duration)}`
     }
     return '入睡中...'
@@ -171,19 +178,30 @@ Page({
   // 提交记录
   submitRecord: function() {
     const { sleepStatus, sleepDate, sleepTime, wakeDate, wakeTime, note, isEditing, editingRecordId } = this.data
+
+    // 检查是否已登录且有家庭
+    if (!app.globalData.familyInfo || !app.globalData.currentBaby) {
+      wx.showToast({
+        title: '请先加入家庭并添加宝宝',
+        icon: 'none'
+      })
+      return
+    }
     
     const record = {
       type: 'sleep',
-      sleepTime: `${sleepDate} ${sleepTime}:00`,
       createdAt: `${sleepDate} ${sleepTime}:00`,
-      note: note
+      data: {
+        sleepTime: `${sleepDate} ${sleepTime}:00`,
+        note: note
+      }
     }
 
     if (sleepStatus === 'wokeup') {
-      record.wakeTime = `${wakeDate} ${wakeTime}:00`
+      record.data.wakeTime = `${wakeDate} ${wakeTime}:00`
       
       // 验证时长
-      const duration = util.calculateDuration(record.sleepTime, record.wakeTime)
+      const duration = util.calculateDuration(record.data.sleepTime, record.data.wakeTime)
       if (duration <= 0) {
         wx.showToast({
           title: '醒来时间不能早于入睡时间',
@@ -201,9 +219,18 @@ Page({
         })
         
         setTimeout(() => {
-          this.resetForm()
-          this.loadRecentRecords()
+          wx.navigateBack({
+            delta: 1,
+            fail: function() {
+              wx.switchTab({ url: '/pages/timeline/timeline' })
+            }
+          })
         }, 1000)
+      } else {
+        wx.showToast({
+          title: result.error || '保存失败',
+          icon: 'none'
+        })
       }
     }
 
@@ -214,50 +241,29 @@ Page({
     }
   },
 
-  // 长按删除记录
-  onLongPressRecord: function(e) {
-    const recordId = e.currentTarget.dataset.id
-    const that = this
-    
-    wx.showModal({
-      title: '确认删除',
-      content: '确定要删除这条记录吗？',
-      confirmColor: '#FF6B8A',
-      success: function(res) {
-        if (res.confirm) {
-          app.deleteRecord(recordId, function(result) {
-            if (result.success) {
-              that.loadRecentRecords()
-              wx.showToast({
-                title: '已删除',
-                icon: 'success'
-              })
-            }
-          })
-        }
-      }
-    })
-  },
-
   // 删除当前编辑的记录
   deleteEditingRecord: function() {
     if (!this.data.editingRecordId) return
     
-    const that = this
     wx.showModal({
       title: '确认删除',
       content: '确定要删除这条记录吗？',
-      confirmColor: '#FF6B8A',
-      success: function(res) {
+      success: res => {
         if (res.confirm) {
-          app.deleteRecord(that.data.editingRecordId, function(result) {
+          app.deleteRecord(this.data.editingRecordId, result => {
             if (result.success) {
-              that.resetForm()
-              that.loadRecentRecords()
               wx.showToast({
                 title: '已删除',
                 icon: 'success'
               })
+              setTimeout(() => {
+                wx.navigateBack({
+                  delta: 1,
+                  fail: function() {
+                    wx.switchTab({ url: '/pages/timeline/timeline' })
+                  }
+                })
+              }, 1000)
             }
           })
         }

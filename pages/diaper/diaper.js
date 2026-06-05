@@ -12,7 +12,6 @@ Page({
     recordDate: '',
     // 备注
     note: '',
- 
     // 编辑状态
     isEditing: false,
     editingRecordId: ''
@@ -27,8 +26,6 @@ Page({
     }
   },
 
-
-
   // 初始化时间
   initTime: function() {
     const now = new Date()
@@ -38,33 +35,36 @@ Page({
     })
   },
 
-
   // 加载记录用于编辑
   loadRecordForEdit: function(recordId) {
-    const records = wx.getStorageSync('localRecords') || []
-    const record = records.find(r => r.id === recordId)
-    if (!record || record.type !== 'diaper') return
+    app.getRecords({ type: 'diaper', limit: 100 }).then(records => {
+      const record = records.find(r => r._id === recordId)
+      if (!record) return
 
-    const dateTime = record.createdAt.split(' ')
-    const date = dateTime[0]
-    const time = dateTime[1] ? dateTime[1].substring(0, 5) : '00:00'
+      const dateTime = record._createTime ? new Date(record._createTime) : new Date()
+      const date = util.formatDate(dateTime)
+      const time = util.formatTimeShort(dateTime)
 
-    this.setData({
-      isEditing: true,
-      editingRecordId: recordId,
-      wet: record.wet || false,
-      dirty: record.dirty || false,
-      recordDate: date,
-      recordTime: time,
-      note: record.note || ''
+      this.setData({
+        isEditing: true,
+        editingRecordId: recordId,
+        wet: record.data ? record.data.wet : record.wet || false,
+        dirty: record.data ? record.data.dirty : record.dirty || false,
+        recordDate: date,
+        recordTime: time,
+        note: record.data ? record.data.note : record.note || ''
+      })
+    }).catch(err => {
+      console.error('加载记录失败', err)
     })
   },
 
   // 获取记录详情
   getRecordDetail: function(record) {
+    const data = record.data || record
     const parts = []
-    if (record.wet) parts.push('湿')
-    if (record.dirty) parts.push('脏')
+    if (data.wet) parts.push('湿')
+    if (data.dirty) parts.push('脏')
     return parts.length > 0 ? parts.join('+') : '换尿布'
   },
 
@@ -106,13 +106,23 @@ Page({
       return
     }
 
+    // 检查是否已登录且有家庭
+    if (!app.globalData.familyInfo || !app.globalData.currentBaby) {
+      wx.showToast({
+        title: '请先加入家庭并添加宝宝',
+        icon: 'none'
+      })
+      return
+    }
+
     const record = {
       type: 'diaper',
-      wet: wet,
-      dirty: dirty,
-      sleepTime: `${recordDate} ${recordTime}:00`,
       createdAt: `${recordDate} ${recordTime}:00`,
-      note: note
+      data: {
+        wet: wet,
+        dirty: dirty,
+        note: note
+      }
     }
 
     const saveCallback = (result) => {
@@ -123,9 +133,18 @@ Page({
         })
         
         setTimeout(() => {
-          this.resetForm()
-          this.loadRecentRecords()
+          wx.navigateBack({
+            delta: 1,
+            fail: function() {
+              wx.switchTab({ url: '/pages/timeline/timeline' })
+            }
+          })
         }, 1000)
+      } else {
+        wx.showToast({
+          title: result.error || '保存失败',
+          icon: 'none'
+        })
       }
     }
 
@@ -136,26 +155,29 @@ Page({
     }
   },
 
-  
   // 删除当前编辑的记录
   deleteEditingRecord: function() {
     if (!this.data.editingRecordId) return
     
-    const that = this
     wx.showModal({
       title: '确认删除',
       content: '确定要删除这条记录吗？',
-      confirmColor: '#FF6B8A',
-      success: function(res) {
+      success: res => {
         if (res.confirm) {
-          app.deleteRecord(that.data.editingRecordId, function(result) {
+          app.deleteRecord(this.data.editingRecordId, result => {
             if (result.success) {
-              that.resetForm()
-              that.loadRecentRecords()
               wx.showToast({
                 title: '已删除',
                 icon: 'success'
               })
+              setTimeout(() => {
+                wx.navigateBack({
+                  delta: 1,
+                  fail: function() {
+                    wx.switchTab({ url: '/pages/timeline/timeline' })
+                  }
+                })
+              }, 1000)
             }
           })
         }

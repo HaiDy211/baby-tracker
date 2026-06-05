@@ -1,136 +1,97 @@
 <view class="container">
-  <!-- 睡眠状态选择 -->
-  <view class="card status-card">
-    <text class="section-title">状态</text>
-    <view class="status-toggle">
-      <view 
-        class="toggle-item {{sleepStatus === 'sleeping' ? 'active' : ''}}"
-        bindtap="toggleSleepStatus"
-        data-status="sleeping"
-      >
-        <text class="toggle-icon">🌙</text>
-        <text class="toggle-label">宝宝睡着了</text>
-      </view>
-      <view 
-        class="toggle-item {{sleepStatus === 'wokeup' ? 'active' : ''}}"
-        bindtap="toggleSleepStatus"
-        data-status="wokeup"
-      >
-        <text class="toggle-icon">☀️</text>
-        <text class="toggle-label">宝宝醒来了</text>
-      </view>
-    </view>
-  </view>
+  <wxs module="util" src="../../utils/util.wxs"></wxs>
 
-  <!-- 入睡时间 -->
-  <view class="card time-card">
-    <view class="time-header">
-      <text class="section-title">入睡时间</text>
-      <text class="time-hint">🌙</text>
+  <!-- 记录表单 -->
+  <view class="card form-card">
+    <view class="form-header">
+      <text class="form-title">{{isEditing ? '编辑记录' : '记录睡眠'}}</text>
     </view>
-    <view class="time-input">
-      <picker mode="date" value="{{sleepDate}}" bindchange="bindSleepDateChange">
+
+    <!-- 宝宝选择 -->
+    <view class="form-row">
+      <text class="form-label">宝宝</text>
+      <picker mode="selector" range="{{babyList}}" range-key="name" bindchange="bindBabyChange">
         <view class="picker-value">
-          <text>{{sleepDate}}</text>
+          <text>{{selectedBabyName || '请选择宝宝'}}</text>
           <text class="arrow">›</text>
         </view>
       </picker>
+    </view>
+
+    <!-- 入睡时间 -->
+    <view class="form-row">
+      <text class="form-label">入睡</text>
       <picker mode="time" value="{{sleepTime}}" bindchange="bindSleepTimeChange">
         <view class="picker-value">
-          <text>{{sleepTime}}</text>
+          <text>{{sleepTime || '请选择'}}</text>
           <text class="arrow">›</text>
         </view>
       </picker>
     </view>
-  </view>
 
-  <!-- 醒来时间（仅醒来模式显示） -->
-  <view class="card time-card wake-card" wx:if="{{sleepStatus === 'wokeup'}}">
-    <view class="time-header">
-      <text class="section-title">醒来时间</text>
-      <text class="time-hint">⏰</text>
-    </view>
-    <view class="time-input">
-      <picker mode="date" value="{{wakeDate}}" bindchange="bindWakeDateChange">
-        <view class="picker-value">
-          <text>{{wakeDate}}</text>
-          <text class="arrow">›</text>
-        </view>
-      </picker>
+    <!-- 醒来时间 -->
+    <view class="form-row">
+      <text class="form-label">醒来</text>
       <picker mode="time" value="{{wakeTime}}" bindchange="bindWakeTimeChange">
         <view class="picker-value">
-          <text>{{wakeTime}}</text>
+          <text>{{wakeTime || '请选择'}}</text>
           <text class="arrow">›</text>
         </view>
       </picker>
     </view>
-  </view>
 
-  <!-- 睡眠时长 -->
-  <view class="card duration-card">
-    <text class="section-title">睡眠时长</text>
-    <view class="duration-display">
-      <text class="duration-icon">😴</text>
-      <text class="duration-value" wx:if="{{sleepStatus === 'sleeping'}}">--</text>
-      <text class="duration-value" wx:else>{{durationText}}</text>
+    <!-- 睡眠时长 -->
+    <view class="form-row" wx:if="{{duration > 0}}">
+      <text class="form-label">时长</text>
+      <view class="duration-display">
+        <text class="duration-value">{{duration}}</text>
+        <text class="duration-unit">分钟</text>
+      </view>
     </view>
-    <text class="duration-tip" wx:if="{{sleepStatus === 'sleeping'}}">宝宝入睡后记录，醒来时再记录一次即可</text>
-    <text class="duration-tip error" wx:elif="{{durationText === '醒来时间不能早于入睡时间'}}">{{durationText}}</text>
+
+    <!-- 备注 -->
+    <view class="form-row">
+      <text class="form-label">备注</text>
+      <input 
+        class="form-input"
+        value="{{formData.notes}}"
+        bindinput="inputNotes"
+        placeholder="选填"
+      />
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="form-actions" wx:if="{{isEditing}}">
+      <button class="btn cancel-btn" bindtap="onCancel">取消</button>
+      <button class="btn delete-btn" bindtap="onDelete">删除</button>
+      <button class="btn save-btn" bindtap="saveRecord">保存</button>
+    </view>
+    <button class="btn primary-btn" bindtap="saveRecord" wx:else>💾 保存记录</button>
   </view>
 
-  <!-- 备注 -->
-  <view class="card note-card">
-    <text class="section-title">备注（选填）</text>
-    <textarea 
-      class="note-input"
-      placeholder="可以记录睡眠质量、姿势等..."
-      value="{{note}}"
-      bindinput="inputNote"
-      maxlength="200"
-    />
-  </view>
-
-  <!-- 提交按钮 -->
-  <view class="submit-btn-wrapper" wx:if="{{!isEditing}}">
-    <button class="submit-btn" bindtap="submitRecord">
-      <text>💾</text>
-      <text wx:if="{{sleepStatus === 'sleeping'}}">记录入睡</text>
-      <text wx:else>记录醒来</text>
-    </button>
-  </view>
-
-  <!-- 编辑模式按钮 -->
-  <view class="edit-btn-wrapper" wx:if="{{isEditing}}">
-    <button class="cancel-btn" bindtap="cancelEdit">
-      <text>取消</text>
-    </button>
-    <button class="delete-btn" bindtap="deleteEditingRecord">
-      <text>🗑️ 删除</text>
-    </button>
-    <button class="save-btn" bindtap="submitRecord">
-      <text>💾 保存</text>
-    </button>
-  </view>
-
-  <!-- 最近记录 -->
-  <view class="card recent-card" wx:if="{{recentRecords.length > 0}}">
-    <text class="section-title">最近记录</text>
-    <view class="recent-list">
+  <!-- 今日记录列表 -->
+  <view class="card records-card">
+    <text class="section-title">今日记录</text>
+    <view class="records-list" wx:if="{{todayRecords.length > 0}}">
       <view 
-        wx:for="{{recentRecords}}" 
-        wx:key="id"
-        class="recent-item {{editingRecordId === item.id ? 'active' : ''}}"
-        bindlongpress="onLongPressRecord"
-        data-id="{{item.id}}"
+        class="record-item" 
+        wx:for="{{todayRecords}}" 
+        wx:key="_id"
+        bindtap="onTapRecord"
+        data-record="{{item}}"
       >
-        <view class="recent-icon">
-          <text>😴</text>
+        <view class="record-time">
+          <text class="time">{{util.formatTime(item.createdAt)}}</text>
+          <text class="record-user">{{item.userTitle}}</text>
         </view>
-        <view class="recent-content">
-          <text class="recent-detail">{{item.detail}}</text>
-          <text class="recent-time">{{item.relativeTime}}</text>
+        <view class="record-content">
+          <text class="record-detail">{{item.data.duration}}分钟</text>
+          <text class="record-notes" wx:if="{{item.data.notes}}">{{item.data.notes}}</text>
         </view>
       </view>
+    </view>
+    <view class="empty-tip" wx:else>
+      <text>暂无今日记录</text>
     </view>
   </view>
 

@@ -30,7 +30,6 @@ Page({
 
   onLoad: function() {
     this.initTime()
-    this.loadRecentRecords()
     this.initChart()
 
     if (getApp().globalData && getApp().globalData.editRecordId) {
@@ -56,7 +55,7 @@ Page({
   // 初始化图表
   initChart: function() {
     const that = this
-    wx.getDeviceInfo()({
+    wx.getSystemInfo({
       success: function(res) {
         that.setData({
           canvasWidth: res.windowWidth - 80,
@@ -68,38 +67,50 @@ Page({
 
   // 加载最近记录
   loadRecentRecords: function() {
-    const records = wx.getStorageSync('localRecords') || []
-    const growthRecords = records
-      .filter(r => r.type === 'growth')
-      .slice(0, 10)
-      .map(r => ({
-        ...r,
-        relativeTime: util.getRelativeTime(r.createdAt),
-        dateStr: r.createdAt.split(' ')[0]
-      }))
-    this.setData({ recentRecords: growthRecords })
-    this.updateChart()
+    if (!app.globalData.familyInfo) return
+
+    app.getRecords({ type: 'growth', limit: 10 }).then(records => {
+      const growthRecords = records.map(r => {
+        const data = r.data || r
+        return {
+          ...r,
+          weight: data.weight,
+          height: data.height,
+          headCircumference: data.headCircumference,
+          relativeTime: util.getRelativeTime(r._createTime),
+          dateStr: util.formatDate(new Date(r._createTime))
+        }
+      })
+      this.setData({ recentRecords: growthRecords })
+      this.updateChart()
+    }).catch(err => {
+      console.error('加载记录失败', err)
+    })
   },
 
   // 加载记录用于编辑
   loadRecordForEdit: function(recordId) {
-    const records = wx.getStorageSync('localRecords') || []
-    const record = records.find(r => r.id === recordId)
-    if (!record || record.type !== 'growth') return
+    app.getRecords({ type: 'growth', limit: 100 }).then(records => {
+      const record = records.find(r => r._id === recordId)
+      if (!record) return
 
-    const dateTime = record.createdAt.split(' ')
-    const date = dateTime[0]
-    const time = dateTime[1] ? dateTime[1].substring(0, 5) : '00:00'
+      const data = record.data || record
+      const dateTime = new Date(record._createTime)
+      const date = util.formatDate(dateTime)
+      const time = util.formatTimeShort(dateTime)
 
-    this.setData({
-      isEditing: true,
-      editingRecordId: recordId,
-      weight: record.weight ? String(record.weight) : '',
-      height: record.height ? String(record.height) : '',
-      headCircumference: record.headCircumference ? String(record.headCircumference) : '',
-      recordDate: date,
-      recordTime: time,
-      note: record.note || ''
+      this.setData({
+        isEditing: true,
+        editingRecordId: recordId,
+        weight: data.weight ? String(data.weight) : '',
+        height: data.height ? String(data.height) : '',
+        headCircumference: data.headCircumference ? String(data.headCircumference) : '',
+        recordDate: date,
+        recordTime: time,
+        note: data.note || ''
+      })
+    }).catch(err => {
+      console.error('加载记录失败', err)
     })
   },
 
@@ -112,7 +123,8 @@ Page({
     let labels = []
     
     records.forEach(r => {
-      const dateParts = r.createdAt.split(' ')[0].split('-')
+      const dateStr = util.formatDate(new Date(r._createTime))
+      const dateParts = dateStr.split('-')
       const label = `${dateParts[1]}/${dateParts[2]}`
       labels.push(label)
       
@@ -152,7 +164,7 @@ Page({
         
         const canvas = res[0].node
         const ctx = canvas.getContext('2d')
-        const dpr = wx.getDeviceInfo().pixelRatio
+        const dpr = wx.getSystemInfoSync().pixelRatio
         
         // 设置canvas尺寸
         canvas.width = res[0].width * dpr
@@ -318,16 +330,25 @@ Page({
       return
     }
 
-    const record = {
-      type: 'growth',
-      sleepTime: `${recordDate} ${recordTime}:00`,
-      createdAt: `${recordDate} ${recordTime}:00`,
-      note: note
+    // 检查是否已登录且有家庭
+    if (!app.globalData.familyInfo || !app.globalData.currentBaby) {
+      wx.showToast({
+        title: '请先加入家庭并添加宝宝',
+        icon: 'none'
+      })
+      return
     }
 
-    if (weight) record.weight = parseFloat(weight)
-    if (height) record.height = parseFloat(height)
-    if (headCircumference) record.headCircumference = parseFloat(headCircumference)
+    const record = {
+      type: 'growth',
+      createdAt: `${recordDate} ${recordTime}:00`,
+      data: {
+        weight: weight ? parseFloat(weight) : null,
+        height: height ? parseFloat(height) : null,
+        headCircumference: headCircumference ? parseFloat(headCircumference) : null,
+        note: note
+      }
+    }
 
     const saveCallback = (result) => {
       if (result.success) {
@@ -340,6 +361,11 @@ Page({
           this.resetForm()
           this.loadRecentRecords()
         }, 1000)
+      } else {
+        wx.showToast({
+          title: result.error || '保存失败',
+          icon: 'none'
+        })
       }
     }
 
@@ -350,46 +376,19 @@ Page({
     }
   },
 
-  // 长按删除记录
-  onLongPressRecord: function(e) {
-    const recordId = e.currentTarget.dataset.id
-    const that = this
-    
-    wx.showModal({
-      title: '确认删除',
-      content: '确定要删除这条记录吗？',
-      confirmColor: '#FF6B8A',
-      success: function(res) {
-        if (res.confirm) {
-          app.deleteRecord(recordId, function(result) {
-            if (result.success) {
-              that.loadRecentRecords()
-              wx.showToast({
-                title: '已删除',
-                icon: 'success'
-              })
-            }
-          })
-        }
-      }
-    })
-  },
-
   // 删除当前编辑的记录
   deleteEditingRecord: function() {
     if (!this.data.editingRecordId) return
     
-    const that = this
     wx.showModal({
       title: '确认删除',
       content: '确定要删除这条记录吗？',
-      confirmColor: '#FF6B8A',
-      success: function(res) {
+      success: res => {
         if (res.confirm) {
-          app.deleteRecord(that.data.editingRecordId, function(result) {
+          app.deleteRecord(this.data.editingRecordId, result => {
             if (result.success) {
-              that.resetForm()
-              that.loadRecentRecords()
+              this.resetForm()
+              this.loadRecentRecords()
               wx.showToast({
                 title: '已删除',
                 icon: 'success'

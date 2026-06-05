@@ -249,3 +249,110 @@
 .bottom-space {
   height: 30rpx;
 }
+
+/* 宝宝选择弹窗 */
+.picker-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+}
+
+.picker-content {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 32rpx 32rpx 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.picker-header {
+  padding: 30rpx;
+  text-align: center;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.picker-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.picker-list {
+  max-height: 600rpx;
+  overflow-y: auto;
+  padding: 20rpx 30rpx;
+}
+
+.picker-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  border-radius: 16rpx;
+  margin-bottom: 16rpx;
+  background-color: #f9f9f9;
+}
+
+.picker-item.active {
+  background-color: #fff5f5;
+  border: 2rpx solid #FFB6C1;
+}
+
+.picker-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+}
+
+.picker-name {
+  flex: 1;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.picker-check {
+  font-size: 36rpx;
+  color: #FFB6C1;
+}
+
+.picker-footer {
+  padding: 20rpx 30rpx;
+  border-top: 1rpx solid #f5f5f5;
+}
+
+.picker-cancel {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background-color: #f5f5f5;
+  color: #666;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+}
+
+.picker-cancel::after {
+  border: none;
+}
+
+/* 切换按钮 */
+.switch-btn {
+  font-size: 24rpx;
+  color: #FFB6C1;
+  background-color: #fff5f5;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  margin-left: 16rpx;
+}
+
+/* 记录人 */
+.recent-recorder {
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 8rpx;
+  display: block;
+}
