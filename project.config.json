@@ -1,5 +1,6 @@
 {
   "description": "宝宝成长记录小程序",
+  "cloudfunctionRoot": "cloudfunctions/",
   "packOptions": {
     "ignore": [],
     "include": []

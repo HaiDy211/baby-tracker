@@ -4,7 +4,7 @@ const util = require('./utils/util.js')
 
 App({
   globalData: {
-    envId: '', // 云开发环境ID，需要手动配置
+    envId: 'cloudbase-d0g4zhfbpbd2b7a16', // 云开发环境ID，需要手动配置
     userInfo: null,       // 用户信息
     familyInfo: null,      // 家庭信息
     currentBaby: null,     // 当前选择的宝宝
