@@ -1,0 +1,69 @@
+// WXS 工具模块（用于 WXML 中的数据处理）
+
+// 格式化日期
+module.exports.formatDate = function(date) {
+  if (!date) return '';
+  var d = getDate(date);
+  var year = d.getFullYear();
+  var month = ('0' + (d.getMonth() + 1)).slice(-2);
+  var day = ('0' + d.getDate()).slice(-2);
+  return year + '-' + month + '-' + day;
+};
+
+// 格式化时间
+module.exports.formatTime = function(date) {
+  if (!date) return '';
+  var d = getDate(date);
+  var hours = ('0' + d.getHours()).slice(-2);
+  var minutes = ('0' + d.getMinutes()).slice(-2);
+  var seconds = ('0' + d.getSeconds()).slice(-2);
+  return hours + ':' + minutes + ':' + seconds;
+};
+
+// 格式化日期时间
+module.exports.formatDateTime = function(date) {
+  if (!date) return '';
+  return formatDate(date) + ' ' + formatTime(date);
+};
+
+// 获取日期对象
+module.exports.getDate = function(dateStr) {
+  if (!dateStr) {
+    return getDate();
+  }
+  // 转换格式以兼容 iOS
+  var str = dateStr.replace(/-/g, '/');
+  return getDate(str);
+};
+
+// 获取相对时间
+module.exports.getRelativeTime = function(date) {
+  if (!date) return '';
+  var d = getDate(date);
+  var now = getDate();
+  var diff = now - d;
+  
+  var seconds = Math.floor(diff / 1000);
+  var minutes = Math.floor(seconds / 60);
+  var hours = Math.floor(minutes / 60);
+  var days = Math.floor(hours / 24);
+  
+  if (days > 0) {
+    return days + '天前';
+  } else if (hours > 0) {
+    return hours + '小时前';
+  } else if (minutes > 0) {
+    return minutes + '分钟前';
+  } else {
+    return '刚刚';
+  }
+};
+
+// 计算睡眠时长（分钟）
+module.exports.calcDuration = function(startTime, endTime) {
+  if (!startTime || !endTime) return 0;
+  var start = getDate(startTime);
+  var end = getDate(endTime);
+  var diff = end - start;
+  return Math.floor(diff / 60000);
+};
