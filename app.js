@@ -457,11 +457,17 @@ App({
 
   // 获取记录
   getRecords: function(options = {}) {
+    console.log('app.getRecords 调用')
+    console.log('familyInfo:', this.globalData.familyInfo)
+    console.log('currentBaby:', this.globalData.currentBaby)
+    
     if (!this.globalData.familyInfo) {
+      console.error('未加入家庭')
       return Promise.reject(new Error('未加入家庭'))
     }
 
     options.familyId = this.globalData.familyInfo._id
+    console.log('查询 familyId:', options.familyId)
 
     if (this.globalData.currentBaby) {
       options.babyId = this.globalData.currentBaby.babyId

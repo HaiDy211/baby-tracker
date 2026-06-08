@@ -37,6 +37,9 @@ Page({
     this.setData({ loading: true })
     
     app.getRecords().then(records => {
+      console.log('timeline 获取到记录数:', records ? records.length : 0)
+      console.log('timeline 记录列表:', records)
+      
       // 类型筛选
       let filteredRecords = records
       if (that.data.filterType !== 'all') {
