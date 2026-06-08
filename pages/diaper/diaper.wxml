@@ -74,33 +74,7 @@
     <button class="btn primary-btn" bindtap="saveRecord" wx:else>💾 保存记录</button>
   </view>
 
-  <!-- 今日记录列表 -->
-  <view class="card records-card">
-    <text class="section-title">今日记录</text>
-    <view class="records-list" wx:if="{{todayRecords.length > 0}}">
-      <view 
-        class="record-item" 
-        wx:for="{{todayRecords}}" 
-        wx:key="_id"
-        bindtap="onTapRecord"
-        data-record="{{item}}"
-      >
-        <view class="record-time">
-          <text class="time">{{util.formatTime(item.createdAt)}}</text>
-          <text class="record-user">{{item.userTitle}}</text>
-        </view>
-        <view class="record-content">
-          <text class="record-type">
-            {{item.data.type === 'pee' ? '小便' : item.data.type === 'poop' ? '大便' : '都有'}}
-          </text>
-          <text class="record-notes" wx:if="{{item.data.notes}}">{{item.data.notes}}</text>
-        </view>
-      </view>
-    </view>
-    <view class="empty-tip" wx:else>
-      <text>暂无今日记录</text>
-    </view>
-  </view>
+
 
   <view class="bottom-space"></view>
 </view>

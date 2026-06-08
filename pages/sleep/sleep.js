@@ -43,7 +43,6 @@ Page({
 
   onShow: function() {
     this.loadBabyList()
-    this.loadRecentRecords()
     this.updateDuration()
   },
 
@@ -78,24 +77,6 @@ Page({
       wakeTime: time,
       wakeDate: date,
       durationText: '选择时间后自动计算'
-    })
-  },
-
-  // 加载最近记录
-  loadRecentRecords: function() {
-    if (!app.globalData.familyInfo) return
-
-    app.getRecords({ type: 'sleep', limit: 10 }).then(records => {
-      const sleepRecords = records.map(r => ({
-        ...r,
-        icon: util.getRecordTypeIcon(r.type),
-        relativeTime: util.getRelativeTime(r._createTime),
-        detail: this.getRecordDetail(r),
-        createdDate: util.formatDate(new Date(r._createTime))
-      }))
-      this.setData({ recentRecords: sleepRecords })
-    }).catch(err => {
-      console.error('加载记录失败', err)
     })
   },
 

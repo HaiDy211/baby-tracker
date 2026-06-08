@@ -46,7 +46,6 @@ Page({
 
   onShow: function() {
     this.loadBabyList()
-    this.loadRecentRecords()
     this.initChart()
   },
 
@@ -88,29 +87,6 @@ Page({
           canvasHeight: 200
         })
       }
-    })
-  },
-
-  // 加载最近记录
-  loadRecentRecords: function() {
-    if (!app.globalData.familyInfo) return
-
-    app.getRecords({ type: 'growth', limit: 10 }).then(records => {
-      const growthRecords = records.map(r => {
-        const data = r.data || r
-        return {
-          ...r,
-          weight: data.weight,
-          height: data.height,
-          headCircumference: data.headCircumference,
-          relativeTime: util.getRelativeTime(r._createTime),
-          dateStr: util.formatDate(new Date(r._createTime))
-        }
-      })
-      this.setData({ recentRecords: growthRecords })
-      this.updateChart()
-    }).catch(err => {
-      console.error('加载记录失败', err)
     })
   },
 

@@ -34,7 +34,6 @@ Page({
 
   onShow: function() {
     this.loadBabyList()
-    this.loadRecentRecords()
   },
 
   // 加载宝宝列表

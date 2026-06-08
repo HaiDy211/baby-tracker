@@ -27,9 +27,7 @@ Page({
     ],
     // 编辑状态
     isEditing: false,
-    editingRecordId: '',
-    // 记录列表
-    recentRecords: []
+    editingRecordId: ''
   },
 
   onLoad: function(options) {
@@ -44,7 +42,6 @@ Page({
 
   onShow: function() {
     this.loadBabyList()
-    this.loadRecentRecords()
   },
 
   // 加载宝宝列表
@@ -72,24 +69,6 @@ Page({
     this.setData({
       recordTime: util.formatTimeShort(now),
       recordDate: util.formatDate(now)
-    })
-  },
-
-  // 加载最近记录
-  loadRecentRecords: function() {
-    if (!app.globalData.familyInfo) return
-
-    app.getRecords({ type: 'feed', limit: 10 }).then(records => {
-      const feedRecords = records.map(r => ({
-        ...r,
-        icon: util.getRecordTypeIcon(r.type),
-        relativeTime: util.getRelativeTime(r._createTime),
-        detail: this.getRecordDetail(r),
-        createdDate: util.formatDate(new Date(r._createTime))
-      }))
-      this.setData({ recentRecords: feedRecords })
-    }).catch(err => {
-      console.error('加载记录失败', err)
     })
   },
 

@@ -94,33 +94,7 @@
     <button class="btn primary-btn" bindtap="saveRecord" wx:else>💾 保存记录</button>
   </view>
 
-  <!-- 记录列表 -->
-  <view class="card records-card">
-    <text class="section-title">成长记录</text>
-    <view class="records-list" wx:if="{{records.length > 0}}">
-      <view 
-        class="record-item" 
-        wx:for="{{records}}" 
-        wx:key="_id"
-        bindtap="onTapRecord"
-        data-record="{{item}}"
-      >
-        <view class="record-date">
-          <text class="date">{{item.data.date}}</text>
-          <text class="record-user">{{item.userTitle}}</text>
-        </view>
-        <view class="record-content">
-          <text class="record-detail" wx:if="{{item.data.height}}">身高: {{item.data.height}}cm</text>
-          <text class="record-detail" wx:if="{{item.data.weight}}">体重: {{item.data.weight}}kg</text>
-          <text class="record-detail" wx:if="{{item.data.headCircumference}}">头围: {{item.data.headCircumference}}cm</text>
-          <text class="record-notes" wx:if="{{item.data.notes}}">{{item.data.notes}}</text>
-        </view>
-      </view>
-    </view>
-    <view class="empty-tip" wx:else>
-      <text>暂无记录</text>
-    </view>
-  </view>
+
 
   <view class="bottom-space"></view>
 </view>
