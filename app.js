@@ -7,7 +7,9 @@ App({
     envId: 'cloudbase-d0g4zhfbpbd2b7a16', // 云开发环境ID，需要手动配置
     userInfo: null,       // 用户信息
     familyInfo: null,      // 家庭信息
+    babyList: [],          // 宝宝列表
     currentBaby: null,     // 当前选择的宝宝
+    currentBabyId: '',     // 当前宝宝ID
     isLoggedIn: false,     // 是否已登录
     isInitialized: false   // 是否已初始化完成
   },
@@ -158,12 +160,17 @@ App({
       db.getUserFamily(this.globalData.userInfo.openid).then(family => {
         if (family) {
           this.globalData.familyInfo = family
+          // 设置宝宝列表
+          this.globalData.babyList = family.babies || []
           // 设置当前宝宝
           const defaultBaby = family.babies.find(b => b.isDefault) || family.babies[0]
           this.globalData.currentBaby = defaultBaby || null
+          this.globalData.currentBabyId = defaultBaby?.babyId || ''
         } else {
           this.globalData.familyInfo = null
+          this.globalData.babyList = []
           this.globalData.currentBaby = null
+          this.globalData.currentBabyId = ''
         }
         resolve(family)
       }).catch(err => {
@@ -268,7 +275,9 @@ App({
       db.leaveFamily(this.globalData.familyInfo._id, this.globalData.userInfo.openid)
         .then(() => {
           this.globalData.familyInfo = null
+          this.globalData.babyList = []
           this.globalData.currentBaby = null
+          this.globalData.currentBabyId = ''
           resolve()
         })
         .catch(err => {
@@ -294,7 +303,9 @@ App({
       db.deleteFamily(this.globalData.familyInfo._id)
         .then(() => {
           this.globalData.familyInfo = null
+          this.globalData.babyList = []
           this.globalData.currentBaby = null
+          this.globalData.currentBabyId = ''
           resolve()
         })
         .catch(err => {
@@ -321,8 +332,10 @@ App({
           return this.loadFamilyInfo()
         })
         .then(family => {
-          // 设置新添加的宝宝为当前宝宝
+          // 更新宝宝列表和当前宝宝
+          this.globalData.babyList = family.babies || []
           this.globalData.currentBaby = family.babies[family.babies.length - 1]
+          this.globalData.currentBabyId = family.babies[family.babies.length - 1]?.babyId || ''
           resolve(family)
         })
         .catch(err => {
@@ -344,7 +357,8 @@ App({
           return this.loadFamilyInfo()
         })
         .then(family => {
-          // 更新当前宝宝
+          // 更新宝宝列表和当前宝宝
+          this.globalData.babyList = family.babies || []
           if (this.globalData.currentBaby && this.globalData.currentBaby.babyId === babyId) {
             this.globalData.currentBaby = family.babies.find(b => b.babyId === babyId)
           }
@@ -369,9 +383,13 @@ App({
           return this.loadFamilyInfo()
         })
         .then(family => {
+          // 更新宝宝列表
+          this.globalData.babyList = family.babies || []
           // 如果删除的是当前宝宝，切换到默认宝宝
           if (this.globalData.currentBaby && this.globalData.currentBaby.babyId === babyId) {
-            this.globalData.currentBaby = family.babies.find(b => b.isDefault) || family.babies[0]
+            const newCurrentBaby = family.babies.find(b => b.isDefault) || family.babies[0]
+            this.globalData.currentBaby = newCurrentBaby || null
+            this.globalData.currentBabyId = newCurrentBaby?.babyId || ''
           }
           resolve(family)
         })
@@ -388,6 +406,7 @@ App({
     const baby = this.globalData.familyInfo.babies.find(b => b.babyId === babyId)
     if (baby) {
       this.globalData.currentBaby = baby
+      this.globalData.currentBabyId = babyId
     }
   },
 
@@ -479,7 +498,9 @@ App({
     wx.removeStorageSync('avatarUrl')
     this.globalData.userInfo = null
     this.globalData.familyInfo = null
+    this.globalData.babyList = []
     this.globalData.currentBaby = null
+    this.globalData.currentBabyId = ''
     this.globalData.isLoggedIn = false
   }
 })
