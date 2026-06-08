@@ -49,7 +49,8 @@ Page({
       // 日期筛选
       if (that.data.filterDate) {
         filteredRecords = filteredRecords.filter(r => {
-          const recordDate = util.formatDate(r.createdAt || r._createTime).split(' ')[0]
+          const timestamp = r.createdAt || r._createTime || Date.now()
+          const recordDate = util.formatDate(timestamp)
           return recordDate === that.data.filterDate
         })
       }
@@ -57,21 +58,22 @@ Page({
       // 按日期分组
       const grouped = {}
       filteredRecords.forEach(r => {
-        const dateTime = util.formatDate(r.createdAt || r._createTime)
-        const date = dateTime.split(' ')[0]
-        const time = dateTime.split(' ')[1].substring(0, 5)
+        // 获取时间戳，优先使用 createdAt，其次是 _createTime
+        const timestamp = r.createdAt || r._createTime || Date.now()
+        const dateStr = util.formatDate(timestamp)
+        const timeStr = util.formatTime(timestamp).substring(0, 5)
         
-        if (!grouped[date]) {
-          grouped[date] = []
+        if (!grouped[dateStr]) {
+          grouped[dateStr] = []
         }
-        grouped[date].push({
+        grouped[dateStr].push({
           ...r,
           id: r._id,
-          createdAt: dateTime,
+          createdAt: dateStr + ' ' + timeStr,
           icon: util.getRecordTypeIcon(r.type),
           typeName: util.getRecordTypeName(r.type),
           color: util.getRecordTypeColor(r.type),
-          time: time,
+          time: timeStr,
           detail: that.getRecordDetail(r)
         })
       })
