@@ -101,8 +101,9 @@ Page({
 
   // 昵称输入
   onNicknameInput: function(e) {
-    var value = e.detail.value
-    if (value !== undefined && value !== null) {
+    // 点击快捷称呼或手动输入
+    var value = e.currentTarget ? e.currentTarget.dataset.name : e.detail.value
+    if (value !== undefined && value !== null && value !== '') {
       this.setData({
         nickname: value
       })
