@@ -255,3 +255,14 @@
   padding: 20rpx;
   margin: -10rpx 0;
 }
+
+/* 类型选择文字 */
+.type-text {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.status-item.active .type-text {
+  color: #20B2AA;
+  font-weight: 600;
+}

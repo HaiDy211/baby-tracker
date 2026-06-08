@@ -34,19 +34,19 @@
       <text class="form-label">类型</text>
       <view class="type-select">
         <view 
-          class="type-item {{formData.type === 'pee' ? 'active' : ''}}"
+          class="status-item {{formData.type === 'pee' ? 'active' : ''}}"
           bindtap="selectType" data-type="pee">
           <text>💧</text>
           <text class="type-text">小便</text>
         </view>
         <view 
-          class="type-item {{formData.type === 'poop' ? 'active' : ''}}"
+          class="status-item {{formData.type === 'poop' ? 'active' : ''}}"
           bindtap="selectType" data-type="poop">
           <text>💩</text>
           <text class="type-text">大便</text>
         </view>
         <view 
-          class="type-item {{formData.type === 'both' ? 'active' : ''}}"
+          class="status-item {{formData.type === 'both' ? 'active' : ''}}"
           bindtap="selectType" data-type="both">
           <text>💪</text>
           <text class="type-text">都有</text>

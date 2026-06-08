@@ -30,7 +30,7 @@ Page({
   onLoad: function(options) {
     // 初始化表单数据
     this.setData({
-      formData: { type: [], note: '' },
+      formData: { type: '', note: '' },
       wet: false,
       dirty: false,
       recordTime: '',
@@ -137,19 +137,11 @@ Page({
   // 选择尿布类型
   selectType: function(e) {
     const type = e.currentTarget.dataset.type
-    const current = this.data.formData.type || []
-    const index = current.indexOf(type)
-    
-    if (index > -1) {
-      current.splice(index, 1)
-    } else {
-      current.push(type)
-    }
-    
+    // 单选模式
     this.setData({
-      'formData.type': current,
-      wet: current.includes('wet'),
-      dirty: current.includes('dirty')
+      'formData.type': type,
+      wet: type === 'wet',
+      dirty: type === 'dirty'
     })
   },
 
@@ -184,6 +176,7 @@ Page({
       type: 'diaper',
       createdAt: `${recordDate} ${recordTime}:00`,
       data: {
+        diaperType: this.data.formData.type,
         wet: wet,
         dirty: dirty,
         note: note
