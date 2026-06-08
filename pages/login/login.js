@@ -102,7 +102,7 @@ Page({
   // 昵称输入
   onNicknameInput: function(e) {
     this.setData({
-      nickname: e.detail.value
+      nickname: e.detail.value || ''
     })
   }
 })
