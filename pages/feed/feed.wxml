@@ -66,13 +66,23 @@
     <!-- 瓶喂奶量 -->
     <view class="form-row" wx:if="{{formData.method === 'bottle'}}">
       <text class="form-label">奶量</text>
+      <view class="quick-select">
+        <view 
+          wx:for="{{[30, 60, 90, 120, 150, 180, 210, 240]}}" 
+          wx:key="*this"
+          class="quick-item {{formData.amount == item ? 'active' : ''}}"
+          bindtap="quickSelectAmount"
+          data-amount="{{item}}">
+          {{item}}
+        </view>
+      </view>
       <view class="input-group">
         <input 
           type="number"
           class="form-input"
           value="{{formData.amount}}"
           bindinput="inputAmount"
-          placeholder="0"
+          placeholder="其他"
         />
         <text class="input-suffix">ml</text>
       </view>

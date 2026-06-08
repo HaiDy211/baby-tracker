@@ -119,9 +119,19 @@ Page({
     })
   },
 
+  // 快速选择奶量
+  quickSelectAmount: function(e) {
+    const amount = e.currentTarget.dataset.amount
+    this.setData({
+      'formData.amount': amount
+    })
+  },
+
   // 输入奶瓶容量
   inputAmount: function(e) {
-    this.setData({ bottleAmount: e.detail.value })
+    this.setData({
+      'formData.amount': e.detail.value
+    })
   },
 
   // 增加容量
@@ -151,6 +161,11 @@ Page({
   // 输入备注
   inputNote: function(e) {
     this.setData({ note: e.detail.value })
+  },
+
+  // 保存记录（入口方法）
+  saveRecord: function() {
+    this.submitRecord()
   },
 
   // 提交记录
