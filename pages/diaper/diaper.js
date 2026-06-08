@@ -117,6 +117,25 @@ Page({
     this.setData({ recordDate: e.detail.value })
   },
 
+  // 选择尿布类型
+  selectType: function(e) {
+    const type = e.currentTarget.dataset.type
+    const current = this.data.formData.type || []
+    const index = current.indexOf(type)
+    
+    if (index > -1) {
+      current.splice(index, 1)
+    } else {
+      current.push(type)
+    }
+    
+    this.setData({
+      'formData.type': current,
+      wet: current.includes('wet'),
+      dirty: current.includes('dirty')
+    })
+  },
+
   // 输入备注
   inputNote: function(e) {
     this.setData({ note: e.detail.value })
