@@ -1,6 +1,10 @@
 /* 日期格式化 yyyy-MM-dd */
 module.exports.formatDate = function(date) {
   if (!date) return '';
+  /* 转换为毫秒时间戳 */
+  if (typeof date === 'number') {
+    if (date < 10000000000) date = date * 1000;
+  }
   var d = getDate(date);
   var year = d.getFullYear();
   var month = ('0' + (d.getMonth() + 1)).slice(-2);
@@ -11,6 +15,10 @@ module.exports.formatDate = function(date) {
 /* 时间格式化 HH:mm:ss */
 module.exports.formatTime = function(date) {
   if (!date) return '';
+  /* 转换为毫秒时间戳 */
+  if (typeof date === 'number') {
+    if (date < 10000000000) date = date * 1000;
+  }
   var d = getDate(date);
   var hours = ('0' + d.getHours()).slice(-2);
   var minutes = ('0' + d.getMinutes()).slice(-2);
