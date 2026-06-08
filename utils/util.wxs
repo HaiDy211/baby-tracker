@@ -1,3 +1,4 @@
+/* 日期格式化 yyyy-MM-dd */
 module.exports.formatDate = function(date) {
   if (!date) return '';
   var d = getDate(date);
@@ -7,6 +8,7 @@ module.exports.formatDate = function(date) {
   return year + '-' + month + '-' + day;
 };
 
+/* 时间格式化 HH:mm:ss */
 module.exports.formatTime = function(date) {
   if (!date) return '';
   var d = getDate(date);
@@ -16,11 +18,13 @@ module.exports.formatTime = function(date) {
   return hours + ':' + minutes + ':' + seconds;
 };
 
+/* 日期时间格式化 yyyy-MM-dd HH:mm:ss */
 module.exports.formatDateTime = function(date) {
   if (!date) return '';
   return formatDate(date) + ' ' + formatTime(date);
 };
 
+/* 获取日期对象 */
 module.exports.getDate = function(dateStr) {
   if (!dateStr) {
     return getDate();
@@ -29,6 +33,7 @@ module.exports.getDate = function(dateStr) {
   return getDate(str);
 };
 
+/* 获取相对时间 */
 module.exports.getRelativeTime = function(date) {
   if (!date) return '';
   var d = getDate(date);
@@ -49,6 +54,7 @@ module.exports.getRelativeTime = function(date) {
   }
 };
 
+/* 计算睡眠时长（分钟） */
 module.exports.calcDuration = function(startTime, endTime) {
   if (!startTime || !endTime) return 0;
   var start = getDate(startTime);
