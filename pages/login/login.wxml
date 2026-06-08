@@ -1,20 +1,61 @@
 <view class="container">
-  <view class="logo-section">
-    <image class="logo" src="/images/baby-icon.png" mode="aspectFit"></image>
-    <text class="app-name">宝宝成长记录</text>
-    <text class="app-desc">记录宝宝每一天的成长</text>
+  <!-- 步骤1: 登录 -->
+  <view wx:if="{{step === 1}}" class="step-container">
+    <view class="logo-section">
+      <image class="logo" src="/images/logo.png" mode="aspectFit" />
+      <text class="app-name">宝宝成长记录</text>
+      <text class="app-desc">记录宝宝成长的每一个瞬间</text>
+    </view>
+
+    <view class="login-section">
+      <button 
+        class="login-btn" 
+        bindtap="onLogin"
+        loading="{{isLoading}}"
+      >
+        微信一键登录
+      </button>
+      <text class="login-hint">登录后即可开始记录宝宝的成长</text>
+    </view>
   </view>
 
-  <view class="login-section">
-    <button 
-      class="login-btn" 
-      type="primary" 
-      bindtap="onLogin"
-      loading="{{isLoading}}"
-    >
-      微信授权登录
-    </button>
-    
-    <text class="login-tip">登录即表示同意《用户协议》和《隐私政策》</text>
+  <!-- 步骤2: 设置昵称 -->
+  <view wx:if="{{step === 2}}" class="step-container">
+    <view class="header-section">
+      <text class="step-title">设置你的称呼</text>
+      <text class="step-desc">在家庭中，你希望被称呼为？</text>
+    </view>
+
+    <view class="nickname-section">
+      <input 
+        class="nickname-input" 
+        type="text" 
+        placeholder="请输入昵称，如：爸爸、妈妈"
+        value="{{nickname}}"
+        bindinput="onNicknameInput"
+        maxlength="10"
+      />
+      
+      <button 
+        class="confirm-btn" 
+        bindtap="onSetNickname"
+        loading="{{isLoading}}"
+      >
+        开始使用
+      </button>
+    </view>
+
+    <view class="title-suggestions">
+      <text class="suggestions-title">常用称呼</text>
+      <view class="suggestions-list">
+        <text 
+          wx:for="{{['爸爸', '妈妈', '爷爷', '奶奶', '外公', '外婆']}}"
+          wx:key="*this"
+          class="suggestion-tag"
+          data-name="{{item}}"
+          bindtap="onNicknameInput"
+        >{{item}}</text>
+      </view>
+    </view>
   </view>
 </view>

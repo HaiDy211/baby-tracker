@@ -65,6 +65,37 @@ function getOrCreateUser(userInfo) {
   })
 }
 
+// 更新用户信息
+function updateUser(userInfo) {
+  return new Promise((resolve, reject) => {
+    const database = initDB()
+    if (!database) {
+      reject(new Error('云数据库未初始化'))
+      return
+    }
+
+    database.collection('users').where({
+      openid: userInfo.openid
+    }).get().then(res => {
+      if (res.data && res.data.length > 0) {
+        const user = res.data[0]
+        database.collection('users').doc(user._id).update({
+          data: {
+            nickname: userInfo.nickname || user.nickname,
+            avatarUrl: userInfo.avatarUrl || user.avatarUrl,
+            updatedAt: Date.now()
+          }
+        }).then(() => {
+          resolve({ ...user, nickname: userInfo.nickname, avatarUrl: userInfo.avatarUrl })
+        }).catch(reject)
+      } else {
+        // 用户不存在，创建新用户
+        getOrCreateUser(userInfo).then(resolve).catch(reject)
+      }
+    }).catch(reject)
+  })
+}
+
 // 根据 openid 获取用户
 function getUserByOpenid(openid) {
   return new Promise((resolve, reject) => {
@@ -630,6 +661,7 @@ module.exports = {
   // 用户
   getOrCreateUser,
   getUserByOpenid,
+  updateUser,
   // 家庭
   createFamily,
   findFamilyByInviteCode,

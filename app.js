@@ -59,31 +59,22 @@ App({
               data: { code: res.code }
             }).then(loginRes => {
               const openid = loginRes.result.openid
-              // 获取用户信息
-              wx.getUserProfile({
-                desc: '用于展示用户信息',
-                success: userRes => {
-                  const userInfo = {
-                    openid: openid,
-                    nickname: userRes.userInfo.nickName,
-                    avatarUrl: userRes.userInfo.avatarUrl
-                  }
-                  // 保存到全局
-                  this.globalData.userInfo = userInfo
-                  this.globalData.isLoggedIn = true
-                  // 保存到云端
-                  db.getOrCreateUser(userInfo).then(savedUser => {
-                    this.globalData.userInfo = savedUser
-                    resolve(savedUser)
-                  }).catch(err => {
-                    console.error('保存用户信息失败', err)
-                    resolve(userInfo)
-                  })
-                },
-                fail: err => {
-                  console.error('获取用户信息失败', err)
-                  reject(err)
-                }
+              // 使用默认昵称
+              const userInfo = {
+                openid: openid,
+                nickname: '家庭成员',
+                avatarUrl: ''
+              }
+              // 保存到全局
+              this.globalData.userInfo = userInfo
+              this.globalData.isLoggedIn = true
+              // 保存到云端
+              db.getOrCreateUser(userInfo).then(savedUser => {
+                this.globalData.userInfo = savedUser
+                resolve(savedUser)
+              }).catch(err => {
+                console.error('保存用户信息失败', err)
+                resolve(userInfo)
               })
             }).catch(err => {
               console.error('获取openid失败', err)
@@ -96,6 +87,33 @@ App({
         fail: err => {
           reject(err)
         }
+      })
+    })
+  },
+
+  // 更新用户信息
+  updateUserInfo: function(nickname, avatarUrl) {
+    return new Promise((resolve, reject) => {
+      if (!this.globalData.userInfo) {
+        reject(new Error('用户未登录'))
+        return
+      }
+      
+      const userInfo = {
+        ...this.globalData.userInfo,
+        nickname: nickname || this.globalData.userInfo.nickname,
+        avatarUrl: avatarUrl || this.globalData.userInfo.avatarUrl
+      }
+      
+      db.updateUser(userInfo).then(updatedUser => {
+        this.globalData.userInfo = updatedUser
+        // 保存到本地
+        wx.setStorageSync('nickname', updatedUser.nickname)
+        wx.setStorageSync('avatarUrl', updatedUser.avatarUrl)
+        resolve(updatedUser)
+      }).catch(err => {
+        console.error('更新用户信息失败', err)
+        reject(err)
       })
     })
   },

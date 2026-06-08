@@ -2,7 +2,9 @@ const app = getApp()
 
 Page({
   data: {
-    isLoading: false
+    isLoading: false,
+    nickname: '',
+    step: 1 // 1: 登录 2: 设置昵称
   },
 
   onLoad: function(options) {
@@ -42,6 +44,36 @@ Page({
       console.log('登录成功', userInfo)
       // 保存登录信息
       app.saveLoginInfo()
+      // 进入设置昵称步骤
+      this.setData({ 
+        isLoading: false, 
+        step: 2,
+        nickname: userInfo.nickname
+      })
+    }).catch(err => {
+      console.error('登录失败', err)
+      wx.showToast({
+        title: '登录失败，请重试',
+        icon: 'none'
+      })
+      this.setData({ isLoading: false })
+    })
+  },
+
+  // 设置昵称
+  onSetNickname: function(e) {
+    const nickname = this.data.nickname.trim()
+    if (!nickname) {
+      wx.showToast({
+        title: '请输入昵称',
+        icon: 'none'
+      })
+      return
+    }
+
+    this.setData({ isLoading: true })
+
+    app.updateUserInfo(nickname).then(() => {
       // 加载家庭信息
       return app.loadFamilyInfo()
     }).then(() => {
@@ -57,13 +89,20 @@ Page({
         })
       }
     }).catch(err => {
-      console.error('登录失败', err)
+      console.error('设置昵称失败', err)
       wx.showToast({
-        title: '登录失败，请重试',
+        title: '设置失败，请重试',
         icon: 'none'
       })
     }).finally(() => {
       this.setData({ isLoading: false })
+    })
+  },
+
+  // 昵称输入
+  onNicknameInput: function(e) {
+    this.setData({
+      nickname: e.detail.value
     })
   }
 })
