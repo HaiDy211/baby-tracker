@@ -4,8 +4,13 @@ const app = getApp()
 
 Page({
   data: {
+    // 表单数据
+    formData: {
+      type: [],      // 尿布类型 ['wet', 'dirty']
+      note: ''
+    },
     // 尿布状态
-    wet: true,    // 湿
+    wet: false,    // 湿
     dirty: false,  // 脏
     // 记录时间
     recordTime: '',
@@ -23,6 +28,18 @@ Page({
   },
 
   onLoad: function(options) {
+    // 初始化表单数据
+    this.setData({
+      formData: { type: [], note: '' },
+      wet: false,
+      dirty: false,
+      recordTime: '',
+      recordDate: '',
+      note: '',
+      isEditing: false,
+      editingRecordId: ''
+    })
+    
     this.initTime()
     this.loadBabyList()
 
