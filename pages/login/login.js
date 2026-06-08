@@ -101,9 +101,10 @@ Page({
 
   // 昵称输入
   onNicknameInput: function(e) {
-    if (e.detail.value !== undefined) {
+    var value = e.detail.value
+    if (value !== undefined && value !== null) {
       this.setData({
-        nickname: e.detail.value
+        nickname: value
       })
     }
   }
