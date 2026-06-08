@@ -268,12 +268,11 @@ Page({
       success: res => {
         if (res.confirm) {
           const app = getApp()
-          app.deleteRecord(this.data.editingRecordId, {
-            success: () => {
+          app.deleteRecord(this.data.editingRecordId, result => {
+            if (result.success) {
               wx.showToast({ title: '已删除', icon: 'success' })
               setTimeout(() => wx.navigateBack(), 1000)
-            },
-            fail: () => {
+            } else {
               wx.showToast({ title: '删除失败', icon: 'none' })
             }
           })
