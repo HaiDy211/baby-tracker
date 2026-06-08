@@ -61,18 +61,24 @@ Page({
         // 获取时间戳，优先使用 _createTime（云数据库自动生成的时间戳）
         // 其次是 createdAt（保存时的字符串日期）
         let timestamp
+        let dateStr = ''
+        let timeStr = ''
+        
         if (r._createTime) {
           // 云数据库时间戳是秒级，需要转换为毫秒
           timestamp = r._createTime < 10000000000 ? r._createTime * 1000 : r._createTime
+          dateStr = util.formatDate(timestamp)
+          timeStr = util.formatTime(timestamp).substring(0, 5)
         } else if (r.createdAt) {
-          // 如果是字符串日期，直接使用
-          timestamp = r.createdAt
+          // 如果是字符串日期，如 "2026-06-04 13:53:00"
+          const parts = r.createdAt.split(' ')
+          dateStr = parts[0] // "2026-06-04"
+          timeStr = parts[1] ? parts[1].substring(0, 5) : '' // "13:53"
         } else {
           timestamp = Date.now()
+          dateStr = util.formatDate(timestamp)
+          timeStr = util.formatTime(timestamp).substring(0, 5)
         }
-        
-        const dateStr = util.formatDate(timestamp)
-        const timeStr = util.formatTime(timestamp).substring(0, 5)
         
         if (!grouped[dateStr]) {
           grouped[dateStr] = []
