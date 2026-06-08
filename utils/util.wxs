@@ -1,6 +1,6 @@
-// WXS 工具模块（用于 WXML 中的数据处理）
+/* WXS 工具模块（用于 WXML 中的数据处理） */
 
-// 格式化日期
+/* 格式化日期 */
 module.exports.formatDate = function(date) {
   if (!date) return '';
   var d = getDate(date);
@@ -10,7 +10,7 @@ module.exports.formatDate = function(date) {
   return year + '-' + month + '-' + day;
 };
 
-// 格式化时间
+/* 格式化时间 */
 module.exports.formatTime = function(date) {
   if (!date) return '';
   var d = getDate(date);
@@ -20,23 +20,23 @@ module.exports.formatTime = function(date) {
   return hours + ':' + minutes + ':' + seconds;
 };
 
-// 格式化日期时间
+/* 格式化日期时间 */
 module.exports.formatDateTime = function(date) {
   if (!date) return '';
   return formatDate(date) + ' ' + formatTime(date);
 };
 
-// 获取日期对象
+/* 获取日期对象 */
 module.exports.getDate = function(dateStr) {
   if (!dateStr) {
     return getDate();
   }
-  // 转换格式以兼容 iOS
+  /* 转换格式以兼容 iOS */
   var str = dateStr.replace(/-/g, '/');
   return getDate(str);
 };
 
-// 获取相对时间
+/* 获取相对时间 */
 module.exports.getRelativeTime = function(date) {
   if (!date) return '';
   var d = getDate(date);
@@ -59,7 +59,7 @@ module.exports.getRelativeTime = function(date) {
   }
 };
 
-// 计算睡眠时长（分钟）
+/* 计算睡眠时长（分钟） */
 module.exports.calcDuration = function(startTime, endTime) {
   if (!startTime || !endTime) return 0;
   var start = getDate(startTime);
