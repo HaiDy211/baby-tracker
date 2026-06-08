@@ -185,7 +185,8 @@ Page({
 
   // 提交记录
   submitRecord: function() {
-    const { feedMethod, bottleAmount, recordTime, recordDate, note, isEditing, editingRecordId } = this.data
+    const { formData, bottleAmount, recordTime, recordDate, note, isEditing, editingRecordId } = this.data
+    const feedMethod = formData.method
     
     // 验证
     if (feedMethod === 'bottle' && (!bottleAmount || bottleAmount <= 0)) {
