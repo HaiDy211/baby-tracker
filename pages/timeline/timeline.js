@@ -58,8 +58,19 @@ Page({
       // 按日期分组
       const grouped = {}
       filteredRecords.forEach(r => {
-        // 获取时间戳，优先使用 createdAt，其次是 _createTime
-        const timestamp = r.createdAt || r._createTime || Date.now()
+        // 获取时间戳，优先使用 _createTime（云数据库自动生成的时间戳）
+        // 其次是 createdAt（保存时的字符串日期）
+        let timestamp
+        if (r._createTime) {
+          // 云数据库时间戳是秒级，需要转换为毫秒
+          timestamp = r._createTime < 10000000000 ? r._createTime * 1000 : r._createTime
+        } else if (r.createdAt) {
+          // 如果是字符串日期，直接使用
+          timestamp = r.createdAt
+        } else {
+          timestamp = Date.now()
+        }
+        
         const dateStr = util.formatDate(timestamp)
         const timeStr = util.formatTime(timestamp).substring(0, 5)
         
@@ -115,10 +126,14 @@ Page({
 
   // 获取记录详情
   getRecordDetail: function(record) {
+    // 获取实际数据对象
+    const data = record.data || record
+    
     switch (record.type) {
       case 'feed':
-        if (record.method === 'bottle') {
-          return `奶瓶 ${record.amount || 0}ml`
+        const method = data.method
+        if (method === 'bottle') {
+          return `奶瓶 ${data.amount || 0}ml`
         } else {
           const sides = {
             'breast-left': '左侧',
@@ -126,24 +141,24 @@ Page({
             'breast-both': '双侧',
             'breast': '亲喂'
           }
-          return `母乳 ${sides[record.method] || '亲喂'}`
+          return `母乳 ${sides[method] || '亲喂'}`
         }
       case 'diaper':
         const types = []
-        if (record.wet) types.push('湿')
-        if (record.dirty) types.push('脏')
+        if (data.wet) types.push('湿')
+        if (data.dirty) types.push('脏')
         return types.join('+') || '换尿布'
       case 'sleep':
-        if (record.wakeTime) {
-          const duration = util.calculateDuration(record.sleepTime, record.wakeTime)
+        if (data.wakeTime) {
+          const duration = util.calculateDuration(data.sleepTime, data.wakeTime)
           return `睡眠 ${util.formatDuration(duration)}`
         }
         return '入睡中'
       case 'growth':
         const items = []
-        if (record.weight) items.push(`体重${record.weight}kg`)
-        if (record.height) items.push(`身高${record.height}cm`)
-        if (record.headCircumference) items.push(`头围${record.headCircumference}cm`)
+        if (data.weight) items.push(`体重${data.weight}kg`)
+        if (data.height) items.push(`身高${data.height}cm`)
+        if (data.headCircumference) items.push(`头围${data.headCircumference}cm`)
         return items.join(' | ') || '成长记录'
       default:
         return ''
