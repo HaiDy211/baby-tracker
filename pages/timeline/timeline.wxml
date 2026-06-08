@@ -105,7 +105,7 @@
               </view>
             </view>
             <view class="record-detail">
-              <text>{{getRecordDetail(record)}}</text>
+              <text>{{record.detail}}</text>
             </view>
             <view class="record-note" wx:if="{{record.note}}">
               <text>{{record.note}}</text>

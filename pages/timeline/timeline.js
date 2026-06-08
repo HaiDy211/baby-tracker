@@ -33,48 +33,58 @@ Page({
 
   // 加载记录
   loadRecords: function() {
+    const that = this
     this.setData({ loading: true })
     
-    const records = wx.getStorageSync('localRecords') || []
-    
-    // 类型筛选
-    let filteredRecords = records
-    if (this.data.filterType !== 'all') {
-      filteredRecords = records.filter(r => r.type === this.data.filterType)
-    }
-    
-    // 日期筛选
-    if (this.data.filterDate) {
-      filteredRecords = filteredRecords.filter(r => {
-        const recordDate = r.createdAt.split(' ')[0]
-        return recordDate === this.data.filterDate
-      })
-    }
-    
-    // 按日期分组
-    const grouped = {}
-    filteredRecords.forEach(r => {
-      const date = r.createdAt.split(' ')[0]
-      if (!grouped[date]) {
-        grouped[date] = []
+    app.getRecords().then(records => {
+      // 类型筛选
+      let filteredRecords = records
+      if (that.data.filterType !== 'all') {
+        filteredRecords = records.filter(r => r.type === that.data.filterType)
       }
-      grouped[date].push({
-        ...r,
-        icon: util.getRecordTypeIcon(r.type),
-        typeName: util.getRecordTypeName(r.type),
-        color: util.getRecordTypeColor(r.type),
-        time: r.createdAt.split(' ')[1].substring(0, 5)
+      
+      // 日期筛选
+      if (that.data.filterDate) {
+        filteredRecords = filteredRecords.filter(r => {
+          const recordDate = util.formatDate(r.createdAt || r._createTime).split(' ')[0]
+          return recordDate === that.data.filterDate
+        })
+      }
+      
+      // 按日期分组
+      const grouped = {}
+      filteredRecords.forEach(r => {
+        const dateTime = util.formatDate(r.createdAt || r._createTime)
+        const date = dateTime.split(' ')[0]
+        const time = dateTime.split(' ')[1].substring(0, 5)
+        
+        if (!grouped[date]) {
+          grouped[date] = []
+        }
+        grouped[date].push({
+          ...r,
+          id: r._id,
+          createdAt: dateTime,
+          icon: util.getRecordTypeIcon(r.type),
+          typeName: util.getRecordTypeName(r.type),
+          color: util.getRecordTypeColor(r.type),
+          time: time,
+          detail: that.getRecordDetail(r)
+        })
       })
-    })
-    
-    // 按日期排序（倒序）
-    const dateList = Object.keys(grouped).sort((a, b) => b.localeCompare(a))
-    
-    this.setData({
-      groupedRecords: grouped,
-      dateList: dateList,
-      totalCount: filteredRecords.length,
-      loading: false
+      
+      // 按日期排序（倒序）
+      const dateList = Object.keys(grouped).sort((a, b) => b.localeCompare(a))
+      
+      that.setData({
+        groupedRecords: grouped,
+        dateList: dateList,
+        totalCount: filteredRecords.length,
+        loading: false
+      })
+    }).catch(err => {
+      console.error('加载记录失败', err)
+      that.setData({ loading: false })
     })
   },
 
@@ -108,9 +118,10 @@ Page({
           const sides = {
             'breast-left': '左侧',
             'breast-right': '右侧',
-            'breast-both': '双侧'
+            'breast-both': '双侧',
+            'breast': '亲喂'
           }
-          return `母乳 ${sides[record.method] || ''}`
+          return `母乳 ${sides[record.method] || '亲喂'}`
         }
       case 'diaper':
         const types = []
@@ -145,7 +156,7 @@ Page({
       confirmColor: '#FF6B8A',
       success: function(res) {
         if (res.confirm) {
-          app.deleteRecord(recordId, function(result) {
+          app.deleteRecord(recordId).then(result => {
             if (result.success) {
               that.loadRecords()
               wx.showToast({
@@ -159,22 +170,22 @@ Page({
     })
   },
 
-    // 点击记录跳转到编辑页面
-    onTapRecord: function(e) {
-      const recordId = e.currentTarget.dataset.id
-      const type = e.currentTarget.dataset.type
-      
-      const pages = {
-        feed: '/pages/feed/feed',
-        diaper: '/pages/diaper/diaper',
-        sleep: '/pages/sleep/sleep',
-        growth: '/pages/growth/growth'
-      }
-      
-      wx.navigateTo({
-        url: `${pages[type]}?recordId=${recordId}`
-      })
-    },
+  // 点击记录跳转到编辑页面
+  onTapRecord: function(e) {
+    const recordId = e.currentTarget.dataset.id
+    const type = e.currentTarget.dataset.type
+    
+    const pages = {
+      feed: '/pages/feed/feed',
+      diaper: '/pages/diaper/diaper',
+      sleep: '/pages/sleep/sleep',
+      growth: '/pages/growth/growth'
+    }
+    
+    wx.navigateTo({
+      url: `${pages[type]}?recordId=${recordId}`
+    })
+  },
 
   // 跳转到对应记录页面
   goToRecord: function(e) {
