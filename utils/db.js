@@ -469,47 +469,38 @@ function getRecords(options = {}) {
       return
     }
 
-    let query = database.collection('records')
-
+    // 构建查询条件
+    let whereObj = {}
+    
     // 按家庭筛选（必须）
     if (options.familyId) {
-      query = query.where({
-        familyId: options.familyId
-      })
+      whereObj.familyId = options.familyId
     }
 
     // 按宝宝筛选
     if (options.babyId) {
-      query = query.where({
-        familyId: options.familyId,
-        babyId: options.babyId
-      })
+      whereObj.babyId = options.babyId
     }
 
     // 按类型筛选
     if (options.type) {
-      query = query.where({
-        familyId: options.familyId,
-        type: options.type
-      })
+      whereObj.type = options.type
     }
 
     // 按日期范围筛选
-    if (options.startDate) {
-      query = query.where({
-        familyId: options.familyId,
-        _createTime: database.command.gte(new Date(options.startDate).getTime())
-      })
+    if (options.startDate || options.endDate) {
+      whereObj._createTime = {}
+      if (options.startDate) {
+        whereObj._createTime.$gte = new Date(options.startDate).getTime()
+      }
+      if (options.endDate) {
+        whereObj._createTime.$lte = new Date(options.endDate).getTime()
+      }
     }
 
-    if (options.endDate) {
-      query = query.where({
-        familyId: options.familyId,
-        _createTime: database.command.lte(new Date(options.endDate).getTime())
-      })
-    }
-
-    query.orderBy('_createTime', 'desc')
+    database.collection('records')
+      .where(whereObj)
+      .orderBy('_createTime', 'desc')
       .limit(options.limit || 100)
       .get()
       .then(res => {
