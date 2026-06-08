@@ -267,25 +267,24 @@ Page({
       content: '确定要删除这条记录吗？',
       success: res => {
         if (res.confirm) {
-          app.deleteRecord(this.data.editingRecordId, result => {
-            if (result.success) {
-              wx.showToast({
-                title: '已删除',
-                icon: 'success'
-              })
-              setTimeout(() => {
-                wx.navigateBack({
-                  delta: 1,
-                  fail: function() {
-                    wx.switchTab({ url: '/pages/timeline/timeline' })
-                  }
-                })
-              }, 1000)
+          const app = getApp()
+          app.deleteRecord(this.data.editingRecordId, {
+            success: () => {
+              wx.showToast({ title: '已删除', icon: 'success' })
+              setTimeout(() => wx.navigateBack(), 1000)
+            },
+            fail: () => {
+              wx.showToast({ title: '删除失败', icon: 'none' })
             }
           })
         }
       }
     })
+  },
+
+  // onDelete 是 deleteEditingRecord 的别名
+  onDelete: function() {
+    this.deleteEditingRecord()
   },
 
   // 取消编辑
