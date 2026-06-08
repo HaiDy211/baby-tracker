@@ -3,11 +3,14 @@
 // 格式化日期为 YYYY-MM-DD
 function formatDate(date) {
   if (!date) return ''
-  // 如果是时间戳（数字），转换为 Date 对象
-  if (typeof date === 'number') {
-    // 时间戳可能是秒或毫秒，判断并转换
+  // 如果是字符串，尝试转换为 Date 对象
+  if (typeof date === 'string') {
+    date = new Date(date.replace(/-/g, '/'))
+  } else if (typeof date === 'number') {
+    // 如果是时间戳（数字），转换为 Date 对象
     date = date < 10000000000 ? new Date(date * 1000) : new Date(date)
   }
+  if (!(date instanceof Date) || isNaN(date)) return ''
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -17,10 +20,14 @@ function formatDate(date) {
 // 格式化时间为 YYYY-MM-DD HH:MM
 function formatTime(date) {
   if (!date) return ''
-  // 如果是时间戳（数字），转换为 Date 对象
-  if (typeof date === 'number') {
+  // 如果是字符串，尝试转换为 Date 对象
+  if (typeof date === 'string') {
+    date = new Date(date.replace(/-/g, '/'))
+  } else if (typeof date === 'number') {
+    // 如果是时间戳（数字），转换为 Date 对象
     date = date < 10000000000 ? new Date(date * 1000) : new Date(date)
   }
+  if (!(date instanceof Date) || isNaN(date)) return ''
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -61,13 +68,15 @@ function calculateDuration(startTime, endTime) {
 // 获取相对时间描述
 function getRelativeTime(date) {
   const now = new Date()
-  // 如果是时间戳，转换为 Date 对象
-  if (typeof date === 'number') {
+  // 如果是字符串，尝试转换为 Date 对象
+  if (typeof date === 'string') {
+    date = new Date(date.replace(/-/g, '/'))
+  } else if (typeof date === 'number') {
+    // 如果是时间戳（数字），转换为 Date 对象
     date = date < 10000000000 ? new Date(date * 1000) : new Date(date)
   }
-  // iOS 不支持 "YYYY-MM-DD HH:mm" 格式，需要转换为 "YYYY-MM-DDTHH:mm:00"
-  const iosCompatibleDate = typeof date === 'string' ? date.replace(' ', 'T') + ':00' : date
-  const diff = now - new Date(iosCompatibleDate)
+  if (!(date instanceof Date) || isNaN(date)) return ''
+  const diff = now - date
   const minutes = Math.floor(diff / 60000)
   const hours = Math.floor(diff / 3600000)
   const days = Math.floor(diff / 86400000)
@@ -76,29 +85,49 @@ function getRelativeTime(date) {
   if (minutes < 60) return `${minutes}分钟前`
   if (hours < 24) return `${hours}小时前`
   if (days < 7) return `${days}天前`
-  return formatDate(new Date(iosCompatibleDate))
+  return formatDate(date)
 }
 
 // 获取星期几
 function getWeekday(date) {
   const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
-  const iosCompatibleDate = typeof date === 'string' ? date.replace(' ', 'T') + ':00' : date
-  return weekdays[new Date(iosCompatibleDate).getDay()]
+  // 如果是字符串，尝试转换为 Date 对象
+  if (typeof date === 'string') {
+    date = new Date(date.replace(/-/g, '/'))
+  } else if (typeof date === 'number') {
+    date = date < 10000000000 ? new Date(date * 1000) : new Date(date)
+  }
+  if (!(date instanceof Date) || isNaN(date)) return ''
+  return weekdays[date.getDay()]
 }
 
 // 判断是否是今天
 function isToday(date) {
+  // 如果是字符串，尝试转换
+  if (typeof date === 'string') {
+    date = new Date(date.replace(/-/g, '/'))
+  } else if (typeof date === 'number') {
+    date = date < 10000000000 ? new Date(date * 1000) : new Date(date)
+  }
+  if (!(date instanceof Date) || isNaN(date)) return false
   const today = formatDate(new Date())
-  const target = formatDate(new Date(date))
+  const target = formatDate(date)
   return today === target
 }
 
 // 判断是否是昨天
 function isYesterday(date) {
+  // 如果是字符串，尝试转换
+  if (typeof date === 'string') {
+    date = new Date(date.replace(/-/g, '/'))
+  } else if (typeof date === 'number') {
+    date = date < 10000000000 ? new Date(date * 1000) : new Date(date)
+  }
+  if (!(date instanceof Date) || isNaN(date)) return false
   const yesterday = new Date()
   yesterday.setDate(yesterday.getDate() - 1)
   const yesterdayStr = formatDate(yesterday)
-  const target = formatDate(new Date(date))
+  const target = formatDate(date)
   return yesterdayStr === target
 }
 
@@ -106,7 +135,14 @@ function isYesterday(date) {
 function getFriendlyDate(date) {
   if (isToday(date)) return '今天'
   if (isYesterday(date)) return '昨天'
-  return `${formatDate(new Date(date))} ${getWeekday(date)}`
+  // 如果是字符串，尝试转换
+  if (typeof date === 'string') {
+    date = new Date(date.replace(/-/g, '/'))
+  } else if (typeof date === 'number') {
+    date = date < 10000000000 ? new Date(date * 1000) : new Date(date)
+  }
+  if (!(date instanceof Date) || isNaN(date)) return ''
+  return `${formatDate(date)} ${getWeekday(date)}`
 }
 
 // 验证是否为空
