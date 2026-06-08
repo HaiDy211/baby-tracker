@@ -213,6 +213,11 @@ Page({
     }
   },
 
+  // 入口方法 - 保存记录
+  saveRecord: function() {
+    this.submitRecord()
+  },
+
   // 删除当前编辑的记录
   deleteEditingRecord: function() {
     if (!this.data.editingRecordId) return
