@@ -152,10 +152,11 @@ Page({
 
   // 提交记录
   submitRecord: function() {
-    const { wet, dirty, recordTime, recordDate, note, isEditing, editingRecordId } = this.data
+    const { recordTime, recordDate, note, isEditing, editingRecordId } = this.data
+    const diaperType = this.data.formData.type || ''
     
-    // 至少选择一种状态
-    if (!wet && !dirty) {
+    // 检查尿布类型
+    if (!diaperType) {
       wx.showToast({
         title: '请选择尿布状态',
         icon: 'none'
@@ -176,9 +177,7 @@ Page({
       type: 'diaper',
       createdAt: `${recordDate} ${recordTime}:00`,
       data: {
-        diaperType: this.data.formData.type,
-        wet: wet,
-        dirty: dirty,
+        diaperType: diaperType,
         note: note
       }
     }
