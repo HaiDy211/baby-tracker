@@ -51,13 +51,23 @@
     <!-- 亲喂时长 -->
     <view class="form-row" wx:if="{{formData.method === 'breast'}}">
       <text class="form-label">时长</text>
+      <view class="quick-select">
+        <view 
+          wx:for="{{[5, 10, 15, 20, 25, 30, 35, 40]}}" 
+          wx:key="*this"
+          class="quick-item {{formData.duration == item ? 'active' : ''}}"
+          bindtap="quickSelectDuration"
+          data-duration="{{item}}">
+          {{item}}
+        </view>
+      </view>
       <view class="input-group">
         <input 
           type="number"
           class="form-input"
           value="{{formData.duration}}"
           bindinput="inputDuration"
-          placeholder="0"
+          placeholder="其他"
         />
         <text class="input-suffix">分钟</text>
       </view>

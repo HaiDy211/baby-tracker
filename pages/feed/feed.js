@@ -134,6 +134,21 @@ Page({
     })
   },
 
+  // 快速选择时长
+  quickSelectDuration: function(e) {
+    const duration = e.currentTarget.dataset.duration
+    this.setData({
+      'formData.duration': duration
+    })
+  },
+
+  // 输入时长
+  inputDuration: function(e) {
+    this.setData({
+      'formData.duration': e.detail.value
+    })
+  },
+
   // 增加容量
   addAmount: function() {
     const current = parseInt(this.data.bottleAmount) || 0
