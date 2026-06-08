@@ -68,7 +68,7 @@ Page({
           // 云数据库时间戳是秒级，需要转换为毫秒
           timestamp = r._createTime < 10000000000 ? r._createTime * 1000 : r._createTime
           dateStr = util.formatDate(timestamp)
-          timeStr = util.formatTime(timestamp).substring(0, 5)
+          timeStr = util.formatTimeShort(timestamp)
         } else if (r.createdAt) {
           // 如果是字符串日期，如 "2026-06-04 13:53:00"
           const parts = r.createdAt.split(' ')
@@ -77,7 +77,7 @@ Page({
         } else {
           timestamp = Date.now()
           dateStr = util.formatDate(timestamp)
-          timeStr = util.formatTime(timestamp).substring(0, 5)
+          timeStr = util.formatTimeShort(timestamp)
         }
         
         if (!grouped[dateStr]) {
