@@ -13,6 +13,11 @@ Page({
     recordDate: '',
     // 备注
     note: '',
+    // 宝宝相关
+    babyList: [],
+    selectedBabyIndex: 0,
+    selectedBabyName: '',
+    selectedBabyId: '',
     // 喂养方式选项
     methodOptions: [
       { value: 'breast-left', label: '左侧母乳' },
@@ -29,6 +34,7 @@ Page({
 
   onLoad: function(options) {
     this.initTime()
+    this.loadBabyList()
 
     // 如果有 recordId 参数，说明是从记录列表进入编辑的
     if (options.recordId) {
@@ -37,7 +43,27 @@ Page({
   },
 
   onShow: function() {
+    this.loadBabyList()
     this.loadRecentRecords()
+  },
+
+  // 加载宝宝列表
+  loadBabyList: function() {
+    const babyList = app.globalData.babyList || []
+    const currentBabyId = app.globalData.currentBabyId || ''
+    
+    let selectedBabyIndex = 0
+    if (currentBabyId) {
+      selectedBabyIndex = babyList.findIndex(b => b.babyId === currentBabyId)
+      if (selectedBabyIndex === -1) selectedBabyIndex = 0
+    }
+    
+    this.setData({
+      babyList: babyList,
+      selectedBabyIndex: selectedBabyIndex,
+      selectedBabyName: babyList[selectedBabyIndex]?.name || '',
+      selectedBabyId: babyList[selectedBabyIndex]?.babyId || ''
+    })
   },
 
   // 初始化时间

@@ -13,6 +13,11 @@ Page({
     recordDate: '',
     // 备注
     note: '',
+    // 宝宝相关
+    babyList: [],
+    selectedBabyIndex: 0,
+    selectedBabyName: '',
+    selectedBabyId: '',
     // 图表类型
     chartType: 'weight',  // weight/height/head
     // 图表数据
@@ -31,6 +36,7 @@ Page({
   onLoad: function() {
     this.initTime()
     this.initChart()
+    this.loadBabyList()
 
     if (getApp().globalData && getApp().globalData.editRecordId) {
       this.loadRecordForEdit(getApp().globalData.editRecordId)
@@ -39,8 +45,28 @@ Page({
   },
 
   onShow: function() {
+    this.loadBabyList()
     this.loadRecentRecords()
     this.initChart()
+  },
+
+  // 加载宝宝列表
+  loadBabyList: function() {
+    const babyList = app.globalData.babyList || []
+    const currentBabyId = app.globalData.currentBabyId || ''
+    
+    let selectedBabyIndex = 0
+    if (currentBabyId) {
+      selectedBabyIndex = babyList.findIndex(b => b.babyId === currentBabyId)
+      if (selectedBabyIndex === -1) selectedBabyIndex = 0
+    }
+    
+    this.setData({
+      babyList: babyList,
+      selectedBabyIndex: selectedBabyIndex,
+      selectedBabyName: babyList[selectedBabyIndex]?.name || '',
+      selectedBabyId: babyList[selectedBabyIndex]?.babyId || ''
+    })
   },
 
   // 初始化时间
