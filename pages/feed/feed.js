@@ -114,7 +114,9 @@ Page({
   // 选择喂奶方式
   selectMethod: function(e) {
     const method = e.currentTarget.dataset.method
-    this.setData({ feedMethod: method })
+    this.setData({
+      'formData.method': method
+    })
   },
 
   // 输入奶瓶容量
