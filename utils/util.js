@@ -2,6 +2,12 @@
 
 // 格式化日期为 YYYY-MM-DD
 function formatDate(date) {
+  if (!date) return ''
+  // 如果是时间戳（数字），转换为 Date 对象
+  if (typeof date === 'number') {
+    // 时间戳可能是秒或毫秒，判断并转换
+    date = date < 10000000000 ? new Date(date * 1000) : new Date(date)
+  }
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -10,6 +16,11 @@ function formatDate(date) {
 
 // 格式化时间为 YYYY-MM-DD HH:MM
 function formatTime(date) {
+  if (!date) return ''
+  // 如果是时间戳（数字），转换为 Date 对象
+  if (typeof date === 'number') {
+    date = date < 10000000000 ? new Date(date * 1000) : new Date(date)
+  }
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -20,6 +31,10 @@ function formatTime(date) {
 
 // 格式化时间为 HH:MM
 function formatTimeShort(date) {
+  if (!date) return ''
+  if (typeof date === 'number') {
+    date = date < 10000000000 ? new Date(date * 1000) : new Date(date)
+  }
   const hour = String(date.getHours()).padStart(2, '0')
   const minute = String(date.getMinutes()).padStart(2, '0')
   return `${hour}:${minute}`
@@ -46,6 +61,10 @@ function calculateDuration(startTime, endTime) {
 // 获取相对时间描述
 function getRelativeTime(date) {
   const now = new Date()
+  // 如果是时间戳，转换为 Date 对象
+  if (typeof date === 'number') {
+    date = date < 10000000000 ? new Date(date * 1000) : new Date(date)
+  }
   // iOS 不支持 "YYYY-MM-DD HH:mm" 格式，需要转换为 "YYYY-MM-DDTHH:mm:00"
   const iosCompatibleDate = typeof date === 'string' ? date.replace(' ', 'T') + ':00' : date
   const diff = now - new Date(iosCompatibleDate)
