@@ -94,11 +94,10 @@ Page({
       this.setData({
         isEditing: true,
         editingRecordId: recordId,
-        wet: record.data ? record.data.wet : record.wet || false,
-        dirty: record.data ? record.data.dirty : record.dirty || false,
+        'formData.type': data.diaperType || data.type || '',
+        'formData.notes': data.note || ''
         recordDate: date,
         recordTime: time,
-        note: record.data ? record.data.note : record.note || ''
       })
     }).catch(err => {
       console.error('加载记录失败', err)
@@ -147,13 +146,13 @@ Page({
 
   // 输入备注
   inputNote: function(e) {
-    this.setData({ note: e.detail.value })
+    this.setData({ 'formData.notes': e.detail.value })
   },
 
   // 提交记录
   submitRecord: function() {
     const { recordTime, recordDate, note, isEditing, editingRecordId } = this.data
-    const diaperType = this.data.formData.type || ''
+    const { formData, recordTime, recordDate, isEditing, editingRecordId } = this.data
     
     // 检查尿布类型
     if (!diaperType) {
@@ -178,7 +177,7 @@ Page({
       createdAt: `${recordDate} ${recordTime}:00`,
       data: {
         diaperType: diaperType,
-        note: note
+        note: formData.notes || ''
       }
     }
 

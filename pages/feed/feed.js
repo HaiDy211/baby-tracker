@@ -4,15 +4,16 @@ const app = getApp()
 
 Page({
   data: {
-    // 喂奶方式: breast-left, breast-right, breast-both, bottle
-    feedMethod: 'breast-left',
-    // 奶瓶容量(ml)
-    bottleAmount: 120,
+    // 表单数据
+    formData: {
+      method: 'breast-left',
+      duration: '',
+      amount: '',
+      notes: ''
+    },
     // 记录时间
     recordTime: '',
     recordDate: '',
-    // 备注
-    note: '',
     // 宝宝相关
     babyList: [],
     selectedBabyIndex: 0,
@@ -78,6 +79,7 @@ Page({
       const record = records.find(r => r._id === recordId)
       if (!record) return
 
+      const data = record.data || record
       const dateTime = record._createTime ? new Date(record._createTime) : new Date()
       const date = util.formatDate(dateTime)
       const time = util.formatTimeShort(dateTime)
@@ -85,11 +87,12 @@ Page({
       this.setData({
         isEditing: true,
         editingRecordId: recordId,
-        feedMethod: record.data ? record.data.method : record.method || 'breast-left',
-        bottleAmount: record.data ? record.data.amount : record.amount || 120,
+        'formData.method': data.method || 'breast-left',
+        'formData.duration': data.duration || '',
+        'formData.amount': data.amount || '',
+        'formData.notes': data.note || '',
         recordDate: date,
-        recordTime: time,
-        note: record.data ? record.data.note : record.note || ''
+        recordTime: time
       })
     }).catch(err => {
       console.error('加载记录失败', err)
@@ -175,7 +178,7 @@ Page({
 
   // 输入备注
   inputNote: function(e) {
-    this.setData({ note: e.detail.value })
+    this.setData({ 'formData.notes': e.detail.value })
   },
 
   // 保存记录（入口方法）
@@ -185,11 +188,11 @@ Page({
 
   // 提交记录
   submitRecord: function() {
-    const { formData, bottleAmount, recordTime, recordDate, note, isEditing, editingRecordId } = this.data
+    const { formData, recordTime, recordDate, isEditing, editingRecordId } = this.data
     const feedMethod = formData.method
     
     // 验证
-    if (feedMethod === 'bottle' && (!bottleAmount || bottleAmount <= 0)) {
+    if (feedMethod === 'bottle' && (!formData.amount || formData.amount <= 0)) {
       wx.showToast({
         title: '请输入奶量',
         icon: 'none'
@@ -219,12 +222,10 @@ Page({
       createdAt: `${recordDate} ${recordTime}:00`,
       data: {
         method: feedMethod,
-        note: note
+        duration: formData.duration || '',
+        amount: formData.amount || '',
+        note: formData.notes || ''
       }
-    }
-
-    if (feedMethod === 'bottle') {
-      record.data.amount = parseInt(bottleAmount)
     }
 
     const saveCallback = (result) => {

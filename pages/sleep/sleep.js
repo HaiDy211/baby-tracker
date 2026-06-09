@@ -5,6 +5,14 @@ const app = getApp()
 Page({
   data: {
     // 睡眠状态: sleeping(入睡中) / wokeup(已醒来)
+    formData: {
+      sleepDate: '',
+      sleepTime: '',
+      wakeDate: '',
+      wakeTime: '',
+      notes: ''
+    },
+    // 睡眠状态: sleeping(入睡中) / wokeup(已醒来)
     sleepStatus: 'sleeping',
     // 入睡时间
     sleepTime: '',
@@ -104,11 +112,11 @@ Page({
         isEditing: true,
         editingRecordId: recordId,
         sleepStatus: sleepStatus,
-        sleepDate: sleepDate,
-        sleepTime: sleepTime,
-        wakeDate: wakeDate,
-        wakeTime: wakeTime,
-        note: data.note || ''
+        'formData.sleepDate': sleepDate,
+        'formData.sleepTime': sleepTime,
+        'formData.wakeDate': wakeDate,
+        'formData.wakeTime': wakeTime,
+        'formData.notes': data.note || ''
       })
       this.updateDuration()
     }).catch(err => {
@@ -288,7 +296,15 @@ Page({
     this.setData({
       isEditing: false,
       editingRecordId: '',
-      sleepStatus: 'sleeping',
+      formData: {
+      sleepDate: '',
+      sleepTime: '',
+      wakeDate: '',
+      wakeTime: '',
+      notes: ''
+    },
+    // 睡眠状态: sleeping(入睡中) / wokeup(已醒来)
+    sleepStatus: 'sleeping',
       note: ''
     })
     this.initTime()
