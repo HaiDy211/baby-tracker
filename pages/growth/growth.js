@@ -33,14 +33,14 @@ Page({
     editingRecordId: ''
   },
 
-  onLoad: function() {
+  onLoad: function(options) {
     this.initTime()
     this.initChart()
     this.loadBabyList()
 
-    if (getApp().globalData && getApp().globalData.editRecordId) {
-      this.loadRecordForEdit(getApp().globalData.editRecordId)
-      getApp().globalData.editRecordId = null
+    // 如果有 recordId 参数，说明是从记录列表进入编辑的
+    if (options.recordId) {
+      this.loadRecordForEdit(options.recordId)
     }
   },
 
@@ -80,7 +80,7 @@ Page({
   // 初始化图表
   initChart: function() {
     const that = this
-    wx.getSystemInfo({
+    wx.getSystemSetting({
       success: function(res) {
         that.setData({
           canvasWidth: res.windowWidth - 80,
@@ -318,6 +318,10 @@ Page({
   inputNote: function(e) {
     this.setData({ note: e.detail.value })
   },
+  // 保存记录（入口方法）
+  saveRecord: function() {
+    this.submitRecord()
+  },
 
   // 提交记录
   submitRecord: function() {
@@ -359,9 +363,14 @@ Page({
           icon: 'success'
         })
         
+        // 延迟返回
         setTimeout(() => {
-          this.resetForm()
-          this.loadRecentRecords()
+          wx.navigateBack({
+            delta: 1,
+            fail: function() {
+              wx.switchTab({ url: '/pages/timeline/timeline' })
+            }
+          })
         }, 1000)
       } else {
         wx.showToast({
@@ -389,8 +398,8 @@ Page({
         if (res.confirm) {
           app.deleteRecord(this.data.editingRecordId, result => {
             if (result.success) {
-              this.resetForm()
-              this.loadRecentRecords()
+              wx.showToast({ title: '已删除', icon: 'success' })
+              setTimeout(() => wx.navigateBack(), 1000)
               wx.showToast({
                 title: '已删除',
                 icon: 'success'
