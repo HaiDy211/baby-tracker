@@ -4,30 +4,21 @@ const app = getApp()
 
 Page({
   data: {
-    // 记录数据
-    weight: '',      // 体重(kg)
-    height: '',      // 身高(cm)
-    headCircumference: '', // 头围(cm)
+    // 表单数据
+    formData: {
+      height: '',      // 身高(cm)
+      weight: '',      // 体重(kg)
+      headCircumference: '', // 头围(cm)
+      notes: ''        // 备注
+    },
     // 记录时间
     recordTime: '',
     recordDate: '',
-    // 备注
-    note: '',
     // 宝宝相关
     babyList: [],
     selectedBabyIndex: 0,
     selectedBabyName: '',
     selectedBabyId: '',
-    // 图表类型
-    chartType: 'weight',  // weight/height/head
-    // 图表数据
-    chartData: [],
-    chartLabels: [],
-    // 最近记录
-    recentRecords: [],
-    // 图表配置
-    canvasWidth: 320,
-    canvasHeight: 200,
     // 编辑状态
     isEditing: false,
     editingRecordId: ''
@@ -104,12 +95,14 @@ Page({
       this.setData({
         isEditing: true,
         editingRecordId: recordId,
-        weight: data.weight ? String(data.weight) : '',
-        height: data.height ? String(data.height) : '',
-        headCircumference: data.headCircumference ? String(data.headCircumference) : '',
         recordDate: date,
         recordTime: time,
-        note: data.note || ''
+        formData: {
+          height: data.height ? String(data.height) : '',
+          weight: data.weight ? String(data.weight) : '',
+          headCircumference: data.headCircumference ? String(data.headCircumference) : '',
+          notes: data.note || ''
+        }
       })
     }).catch(err => {
       console.error('加载记录失败', err)
@@ -291,17 +284,22 @@ Page({
 
   // 输入体重
   inputWeight: function(e) {
-    this.setData({ weight: e.detail.value })
+    this.setData({ 'formData.weight': e.detail.value })
   },
 
   // 输入身高
   inputHeight: function(e) {
-    this.setData({ height: e.detail.value })
+    this.setData({ 'formData.height': e.detail.value })
   },
 
   // 输入头围
   inputHeadCircumference: function(e) {
-    this.setData({ headCircumference: e.detail.value })
+    this.setData({ 'formData.headCircumference': e.detail.value })
+  },
+
+  // 输入备注
+  inputNotes: function(e) {
+    this.setData({ 'formData.notes': e.detail.value })
   },
 
   // 修改时间
@@ -325,7 +323,8 @@ Page({
 
   // 提交记录
   submitRecord: function() {
-    const { weight, height, headCircumference, recordTime, recordDate, note, isEditing, editingRecordId } = this.data
+    const { formData, recordTime, recordDate, isEditing, editingRecordId } = this.data
+    const { weight, height, headCircumference, notes } = formData
     
     // 至少填写一项
     if (!weight && !height && !headCircumference) {
@@ -352,7 +351,7 @@ Page({
         weight: weight ? parseFloat(weight) : null,
         height: height ? parseFloat(height) : null,
         headCircumference: headCircumference ? parseFloat(headCircumference) : null,
-        note: note
+        note: notes
       }
     }
 
